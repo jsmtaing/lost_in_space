@@ -1,3 +1,9 @@
+/*
+Group Members:
+Joshua Taing
+Max Mazal
+*/
+
 #include <stdlib.h>
 #include <math.h>
 #include "vector.h"
