@@ -1,6 +1,7 @@
 FLAGS= -DDEBUG
 LIBS= -lm
 ALWAYS_REBUILD=makefile
+NVCC= nvcc  #used for CUDA code
 
 nbody: nbody.o compute.o
 	gcc $(FLAGS) $^ -o $@ $(LIBS)
