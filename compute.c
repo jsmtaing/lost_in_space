@@ -9,11 +9,33 @@ Max Mazal
 #include "vector.h"
 #include "config.h"
 
+//Duh
+#include <cuda_runtime.h>
+
+//Device variables
+vector3* dPos;
+vector3* dVel;
+double* dMass;
+vector3* dAccels;
+
 //compute: Updates the positions and locations of the objects in the system based on gravity.
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
 void compute(){
+
+//Code to allocate the device variables, allocates at the very start of the compute method before any computing is done
+cudaMalloc((void**)&dPos, sizeof(vector3) * NUMENTITIES);
+cudaMalloc((void**)&dVel, sizeof(vector3) * NUMENTITIES);
+cudaMalloc((void**)&dMass, sizeof(double) * NUMENTITIES);
+cudaMalloc((void**)&dAccels, sizeof(vector3) * NUMENTITIES * NUMENTITIES);
+
+//Copies the data from the CPU to the GPU to ensure they both have the same initial data before computing
+cudaMemcpy(dPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+cudaMemcpy(dVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+cudaMemcpy(dMass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice);
+
+
 	//make an acceleration matrix which is NUMENTITIES squared in size;
 	int i,j,k;
 	vector3* values=(vector3*)malloc(sizeof(vector3)*NUMENTITIES*NUMENTITIES);
@@ -52,4 +74,11 @@ void compute(){
 	}
 	free(accels);
 	free(values);
+
+	//Frees the memory after computing
+	cudaFree(dPos);
+	cudaFree(dVel);
+	cudaFree(dMass);
+	cudaFree(dAccels);
+
 }
