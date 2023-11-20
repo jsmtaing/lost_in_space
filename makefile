@@ -1,3 +1,6 @@
+# Group:
+# Joshua Taing, Max Mazal
+
 FLAGS= -DDEBUG
 LIBS= -lm
 ALWAYS_REBUILD=makefile
