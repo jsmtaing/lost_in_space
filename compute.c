@@ -24,16 +24,16 @@ vector3* dAccels;
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
 void compute(){
 
-//Code to allocate the device variables, allocates at the very start of the compute method before any computing is done
-cudaMalloc((void**)&dPos, sizeof(vector3) * NUMENTITIES);
-cudaMalloc((void**)&dVel, sizeof(vector3) * NUMENTITIES);
-cudaMalloc((void**)&dMass, sizeof(double) * NUMENTITIES);
-cudaMalloc((void**)&dAccels, sizeof(vector3) * NUMENTITIES * NUMENTITIES);
+	//Code to allocate the device variables, allocates at the very start of the compute method before any computing is done
+	cudaMalloc((void**)&dPos, sizeof(vector3) * NUMENTITIES);
+	cudaMalloc((void**)&dVel, sizeof(vector3) * NUMENTITIES);
+	cudaMalloc((void**)&dMass, sizeof(double) * NUMENTITIES);
+	cudaMalloc((void**)&dAccels, sizeof(vector3) * NUMENTITIES * NUMENTITIES);
 
-//Copies the data from the CPU to the GPU to ensure they both have the same initial data before computing
-cudaMemcpy(dPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
-cudaMemcpy(dVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
-cudaMemcpy(dMass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice);
+	//Copies the data from the CPU to the GPU to ensure they both have the same initial data before computing
+	cudaMemcpy(dPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+	cudaMemcpy(dVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+	cudaMemcpy(dMass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice);
 
 
 	//make an acceleration matrix which is NUMENTITIES squared in size;
