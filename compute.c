@@ -4,13 +4,11 @@ Joshua Taing
 Max Mazal
 */
 
+#include <cuda_runtime.h>
 #include <stdlib.h>
 #include <math.h>
 #include "vector.h"
 #include "config.h"
-
-//Duh
-#include <cuda_runtime.h>
 
 //Device variables
 vector3* dPos;
