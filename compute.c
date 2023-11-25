@@ -17,7 +17,7 @@ Max Mazal
 __global__ void initAccels(vector3 *accels, vector3 *vals, int numEntities){
 	int idx = threadIdx.x + blockIdx.x * blockDim.x;
 	if (idx < numEntities) {
-		accels[idx] = &values[idx*numEntities];
+		accels[idx] = &vals[idx*numEntities];
     }
 }
 
@@ -25,8 +25,7 @@ __global__ void initAccels(vector3 *accels, vector3 *vals, int numEntities){
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
-__global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
-	
+__global__ void compute(vector3 *accels, vector3 *accel_sum, vector3 *hVel, vector3 *hPos, double *mass){
 	//You probably noticed I removed memory stuff. Think it is better to do it within nbody.c, in the main function.
 
     //First compute the pairwise accelerations.  Effect is on the first argument.
