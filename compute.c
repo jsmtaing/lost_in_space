@@ -26,6 +26,7 @@ __global__ void initAccels(vector3 *accels, vector3 *vals, int numEntities){
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
 __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
+	
 	//You probably noticed I removed memory stuff. Think it is better to do it within nbody.c, in the main function.
 
     //First compute the pairwise accelerations.  Effect is on the first argument.
