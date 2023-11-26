@@ -38,7 +38,7 @@ __global__ void compute(vector3 *accels, vector3 *accel_sum, vector3 *hVel, vect
 		else {
 			vector3 distance;
 			for (int k = 0; k < 3; k++) {
-				distance[k] = hPos[a][k] - hPos[a][k];
+				distance[k] = hPos[b][k] - hPos[a][k]; //changes from "hPos[a][k] - hPos[a][k]" to current 
 			}
 			double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
 			double magnitude = sqrt(magnitude_sq);
@@ -46,6 +46,9 @@ __global__ void compute(vector3 *accels, vector3 *accel_sum, vector3 *hVel, vect
 			FILL_VECTOR(accels[a][b], accelmag * distance[0] / magnitude, accelmag * distance[1] / magnitude, accelmag * distance[2] / magnitude);
 		}
 	}
+
+	//synchronizes the threads before procceeding
+	__syncthreads();
 
     //Sum up the rows of our matrix to get effect on each entity.
 	int c = blockIdx.x * blockDim.x + threadIdx.x;
