@@ -25,15 +25,7 @@ void initHostMemory(int numObjects)
 	hPos = (vector3 *)malloc(sizeof(vector3) * numObjects);
 	mass = (double *)malloc(sizeof(double) * numObjects);
 
-	// Allocate memory on the device.
-	cudaMalloc(&d_hVel, sizeof(vector3) * numObjects);
-	cudaMalloc(&d_hPos, sizeof(vector3) * numObjects);
-	cudaMalloc(&d_mass, sizeof(double) * numObjects);
 
-	// Copy data from host to device
-	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_mass, mass, sizeof(double) * numObjects, cudaMemcpyHostToDevice);
 }
 
 //freeHostMemory: Free storage allocated by a previous call to initHostMemory
@@ -104,6 +96,12 @@ void printSystem(FILE* handle){
 
 int main(int argc, char **argv)
 {
+
+	//allocating memory for the device variables
+	cudaMalloc((void**)&d_hVel, sizeof(vector3) * NUMENTITIES);
+	cudaMalloc((void**)&d_hPos, sizeof(vector3) * NUMENTITIES);
+	cudaMalloc((void**)&d_mass, sizeof(double) * NUMENTITIES);
+
 	clock_t t0=clock();
 	int t_now;
 
@@ -122,6 +120,9 @@ int main(int argc, char **argv)
 		compute();
 	}
 
+
+
+
 	clock_t t1=clock()-t0;
 
 	#ifdef DEBUG
@@ -131,4 +132,8 @@ int main(int argc, char **argv)
 	printf("This took a total time of %f seconds\n",(double)t1/CLOCKS_PER_SEC);
 
 	freeHostMemory();
+	//frees the device variables
+	cudaFree(d_hVel);
+	cudaFree(d_hPos);
+	cudaFree(d_mass);
 }
