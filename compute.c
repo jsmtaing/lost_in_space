@@ -42,7 +42,7 @@ __global__ void compute(vector3 *accels, vector3 *accel_sum, vector3 *hVel, vect
 			}
 			double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
 			double magnitude = sqrt(magnitude_sq);
-			double accelmag = -1 * GRAV_CONSTANT * mass[j] / magnitude_sq;
+			double accelmag = -1 * GRAV_CONSTANT * mass[b] / magnitude_sq; //changed from mass j to mass b
 			FILL_VECTOR(accels[a][b], accelmag * distance[0] / magnitude, accelmag * distance[1] / magnitude, accelmag * distance[2] / magnitude);
 		}
 	}
