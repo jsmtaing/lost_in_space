@@ -117,7 +117,21 @@ int main(int argc, char **argv)
 	#endif
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
-		compute();
+
+		//copy from host to device
+		cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+		cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+		cudaMemcpy(d_mass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice);
+		
+		//call the compute method with the variables
+		compute<<<gridSize, blockSize>>>(d_accels, d_accel_sum, d_hVel, d_hPos, d_mass);
+
+		//wait for all processes to finish
+		cudaDeviceSynchronize();
+
+		//copy from device back to host
+		cudaMemcpy(hVel, d_hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
+		cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	}
 
 

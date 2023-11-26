@@ -61,3 +61,4 @@ __global__ void compute(vector3 *accels, vector3 *accel_sum, vector3 *hVel, vect
 		hPos[c][d] += hVel[c][d] * INTERVAL;
 	}
 }
+
