@@ -38,7 +38,7 @@ __global__ void compute(vector3 *accels, vector3 *accel_sum, vector3 *hVel, vect
 		else {
 			vector3 distance;
 			for (int k = 0; k < 3; k++) {
-				distance[k] = hPos[b][k] - hPos[a][k]; //changes from "hPos[a][k] - hPos[a][k]" to current 
+				distance[k] = hPos[b][k] - hPos[a][k]; //changed from "hPos[a][k] - hPos[a][k]" to current 
 			}
 			double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
 			double magnitude = sqrt(magnitude_sq);
@@ -60,7 +60,7 @@ __global__ void compute(vector3 *accels, vector3 *accel_sum, vector3 *hVel, vect
 			accel_sum[c][d] += accels[c][k][d];
 		}
 		//Then update velocity and position.
-		hVel[c][d] += accel_sum[c][d]
+		hVel[c][d] += accel_sum[c][d];
 		hPos[c][d] += hVel[c][d] * INTERVAL;
 	}
 }

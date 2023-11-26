@@ -102,6 +102,8 @@ int main(int argc, char **argv)
 	cudaMalloc((void**)&d_hPos, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc((void**)&d_mass, sizeof(double) * NUMENTITIES);
 
+	
+
 	clock_t t0=clock();
 	int t_now;
 
@@ -116,13 +118,18 @@ int main(int argc, char **argv)
 	printSystem(stdout);
 	#endif
 
+	//defined BLOCK_SIZE in config file
+	dim3 blockSize(BLOCK_SIZE,BLOCK_SIZE);
+	//uses blocksize to set up grid dimensions
+	dim3 gridSize(NUMENTITIES / blockSize.x, NUMENTITIES / blockSize.y);
+
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
 
 		//copy from host to device
 		cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 		cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 		cudaMemcpy(d_mass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice);
-		
+
 		//call the compute method with the variables
 		compute<<<gridSize, blockSize>>>(d_accels, d_accel_sum, d_hVel, d_hPos, d_mass);
 
