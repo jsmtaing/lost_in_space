@@ -14,9 +14,14 @@ Max Mazal
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
-__global__ void compute(){
+__global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 	//make an acceleration matrix which is NUMENTITIES squared in size;
 	int i,j,k;
+
+	//thread / block indices
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+
 	vector3* values=(vector3*)malloc(sizeof(vector3)*NUMENTITIES*NUMENTITIES);
 	vector3** accels=(vector3**)malloc(sizeof(vector3*)*NUMENTITIES);
 	for (i=0;i<NUMENTITIES;i++)
