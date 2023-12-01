@@ -13,7 +13,7 @@
 // represents the objects in the system.  Global variables
 vector3 *hVel, *d_hVel;
 vector3 *hPos, *d_hPos;
-double *mass, *d_mass;
+double *mass;
 
 //initHostMemory: Create storage for numObjects entities in our system
 //Parameters: numObjects: number of objects to allocate
@@ -24,8 +24,6 @@ void initHostMemory(int numObjects)
 	hVel = (vector3 *)malloc(sizeof(vector3) * numObjects);
 	hPos = (vector3 *)malloc(sizeof(vector3) * numObjects);
 	mass = (double *)malloc(sizeof(double) * numObjects);
-
-
 }
 
 //freeHostMemory: Free storage allocated by a previous call to initHostMemory
@@ -34,9 +32,12 @@ void initHostMemory(int numObjects)
 //Side Effects: Frees the memory allocated to global variables hVel, hPos, and mass.
 void freeHostMemory()
 {
-	free(hVel);
-	free(hPos);
-	free(mass);
+	//free(hVel);
+	//free(hPos);
+	//free(mass);
+	cudaFree(hVel);
+	cudaFree(hPos);
+	cudaFree(mass);
 }
 
 //planetFill: Fill the first NUMPLANETS+1 entries of the entity arrays with an estimation

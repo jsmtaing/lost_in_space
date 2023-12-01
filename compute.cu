@@ -10,17 +10,10 @@ Max Mazal
 #include "vector.h"
 #include "config.h"
 
-//initAccels: Initializes the acceleration matrix which is NUMENTITIES squared in size
-//Parameters: vector3 *accels, vector3 *vals, int numEntities
-//Returns: none
-//Notes: i'm thinking we call this first in main, then compute; why am i splitting it up? works like that in my brain
-
-
 //compute: Updates the positions and locations of the objects in the system based on gravity.
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
-
 __global__ void compute(){
 	//make an acceleration matrix which is NUMENTITIES squared in size;
 	int i,j,k;
