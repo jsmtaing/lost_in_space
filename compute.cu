@@ -17,7 +17,7 @@ Max Mazal
 __global__ void initAccels(vector3 *accels, vector3 *vals, int numEntities){
 	int idx = threadIdx.x + blockIdx.x * blockDim.x;
 	if (idx < numEntities) {
-		accels[idx] = &vals[idx*numEntities];
+		*accels[idx] = &vals[idx*numEntities];
     }
 }
 
@@ -33,7 +33,7 @@ __global__ void compute(vector3 *accels, vector3 *accel_sum, vector3 *hVel, vect
 
 	if (a < NUMENTITIES && b < NUMENTITIES) {
 		if (a == b) {
-			FILL_VECTOR(accels[a][b], 0, 0, 0);
+			FILL_VECTOR(*accels[a][b], 0, 0, 0);
 		}
 		else {
 			vector3 distance;
@@ -43,7 +43,7 @@ __global__ void compute(vector3 *accels, vector3 *accel_sum, vector3 *hVel, vect
 			double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
 			double magnitude = sqrt(magnitude_sq);
 			double accelmag = -1 * GRAV_CONSTANT * mass[b] / magnitude_sq; //changed from mass j to mass b
-			FILL_VECTOR(accels[a][b], accelmag * distance[0] / magnitude, accelmag * distance[1] / magnitude, accelmag * distance[2] / magnitude);
+			FILL_VECTOR(*accels[a][b], accelmag * distance[0] / magnitude, accelmag * distance[1] / magnitude, accelmag * distance[2] / magnitude);
 		}
 	}
 
@@ -57,7 +57,7 @@ __global__ void compute(vector3 *accels, vector3 *accel_sum, vector3 *hVel, vect
 	if (c < NUMENTITIES) {
 		FILL_VECTOR(accel_sum[c], 0, 0, 0);
 		for (int k = 0; k < NUMENTITIES; k++) {
-			accel_sum[c][d] += accels[c][k][d];
+			accel_sum[c][d] += *accels[c][k][d];
 		}
 		//Then update velocity and position.
 		hVel[c][d] += accel_sum[c][d];
