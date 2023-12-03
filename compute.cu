@@ -33,7 +33,7 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 
 
 	//Max 12.3.23 12pm
-	//these arrays load each thread's mass, position, and velocity data into the shared memory
+	//these arrays load each thread's mass, position, and velocity data into the shared memory (respectively)
 	sharedMass[row] = d_mass[blockRow + row];
     for (int k = 0; k < 3; k++)
     	sharedPos[row][k] = d_hPos[blockRow + row][k];

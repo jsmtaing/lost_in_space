@@ -9,7 +9,7 @@ NVCC= nvcc  #used for CUDA code
 nbody: nbody.o compute.o
 	$(NVCC) $(FLAGS) $^ -o $@ $(LIBS)
 nbody.o: nbody.cu planets.h config.h vector.h $(ALWAYS_REBUILD)
-	gcc $(FLAGS) -c $< 
+	$(NVCC) $(FLAGS) -c $< 
 compute.o: compute.cu config.h vector.h $(ALWAYS_REBUILD)
 	$(NVCC) $(FLAGS) -c $< 
 clean:
