@@ -35,8 +35,10 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 	//Max 12.3.23 12pm
 	//these arrays load each thread's mass, position, and velocity data into the shared memory
 	sharedMass[row] = d_mass[blockRow + row];
-    sharedPos[row] = d_hPos[blockRow + row];
-    sharedVel[row] = d_hVel[blockRow + row];
+    for (int k = 0; k < 3; k++)
+    	sharedPos[row][k] = d_hPos[blockRow + row][k];
+    for (int k = 0; k < 3; k++)
+    	sharedVel[row][k] = d_hVel[blockRow + row][k];
 
 	//Max 12.3.23 12pm
 	//syncs the threads to ensure each block finished loading data into shared memory before procceeding with computation
@@ -61,7 +63,9 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 	__syncthreads();
 
 	//gets the sum of the rows of the matrix
-	sharedAccels[row * BLOCK_SIZE + col] = tempAccel;
+	for (int k = 0; k < 3; k++)
+    	sharedAccels[row * BLOCK_SIZE + col][k] = tempAccel[k];
+
 
 	__syncthreads();
 
@@ -81,8 +85,10 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 	__syncthreads();
 
 	//copies data back to global
-    d_hVel[blockRow + row] = sharedVel[row];
-    d_hPos[blockRow + row] = sharedPos[row];
+    for (int k = 0; k < 3; k++) {
+		d_hVel[blockRow + row][k] = sharedVel[row][k];
+		d_hPos[blockRow + row][k] = sharedPos[row][k];
+	}
 
 	vector3* values = (vector3*)malloc(sizeof(vector3) * NUMENTITIES * NUMENTITIES);
     vector3** accels = (vector3**)malloc(sizeof(vector3*) * NUMENTITIES);
