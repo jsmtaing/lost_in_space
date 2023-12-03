@@ -50,7 +50,7 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
     for (int j = 0; j < BLOCK_SIZE; j++){
         vector3 distance;
         for (int k = 0; k < 3; k++)
-		distance[k] = sharedPos[row][k] - sharedPos[j][k];
+			distance[k] = sharedPos[row][k] - sharedPos[j][k];
 
         double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
         double magnitude = sqrt(magnitude_sq);
@@ -86,6 +86,10 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
     d_hVel[blockRow + row] = sharedVel[row];
     d_hPos[blockRow + row] = sharedPos[row];
 
+	vector3* values = (vector3*)malloc(sizeof(vector3) * NUMENTITIES * NUMENTITIES);
+    vector3** accels = (vector3**)malloc(sizeof(vector3*) * NUMENTITIES);
+    for (int i = 0; i < NUMENTITIES; i++)
+        accels[i] = &values[i * NUMENTITIES];
 
 
 	// //sum up the rows of our matrix to get effect on each entity, then update velocity and position.
