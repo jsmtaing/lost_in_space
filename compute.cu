@@ -58,8 +58,8 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
             double accelmag = -1 * GRAV_CONSTANT * sharedMass[threadIdx.x] / magnitude_sq;
 
             for (int k = 0; k < 3; k++)
-				accel_sum[threadIdx.x][k] += accelmag * distance[k] / magnitude;
-        }
+                atomicAdd(&accel_sum[threadIdx.x][k], accelmag * distance[k] / magnitude);
+		}
     }
 
 	__syncthreads();
