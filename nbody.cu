@@ -14,6 +14,9 @@
 vector3 *hVel, *d_hVel;
 vector3 *hPos, *d_hPos;
 double *mass;
+//added
+vector3 *d_accels;
+vector3 *d_accel_sum;
 
 //initHostMemory: Create storage for numObjects entities in our system
 //Parameters: numObjects: number of objects to allocate
@@ -24,6 +27,8 @@ void initHostMemory(int numObjects)
 	hVel = (vector3 *)malloc(sizeof(vector3) * numObjects);
 	hPos = (vector3 *)malloc(sizeof(vector3) * numObjects);
 	mass = (double *)malloc(sizeof(double) * numObjects);
+	cudaMalloc((void**)&d_accels, sizeof(vector3) * NUMENTITIES * NUMENTITIES);
+    cudaMalloc((void**)&d_accel_sum, sizeof(vector3) * NUMENTITIES);
 }
 
 //freeHostMemory: Free storage allocated by a previous call to initHostMemory
@@ -38,6 +43,8 @@ void freeHostMemory()
 	cudaFree(hVel);
 	cudaFree(hPos);
 	cudaFree(mass);
+	cudaFree(d_accels);
+    cudaFree(d_accel_sum);
 }
 
 //planetFill: Fill the first NUMPLANETS+1 entries of the entity arrays with an estimation
