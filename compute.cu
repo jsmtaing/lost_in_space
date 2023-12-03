@@ -28,16 +28,17 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
     
 	//Max 12.3.23 12pm
 	//declares shared memory arrays to store data to be shared among threads within the block
-	__shared__ double shared_d_mass[BLOCK_SIZE];
-	__shared__ vector3 shared_hPos[2 * BLOCK_SIZE];
-	__shared__ vecto3  shared_accels[BLOCK_SIZE * BLOCK_SIZE];
-	__shared__ vector3 accel_sum[BLOCK_SIZE];
+    __shared__ double sharedMass[BLOCK_SIZE];
+    __shared__ vector3 sharedPos[2 * BLOCK_SIZE];
+    __shared__ vector3 sharedVel[BLOCK_SIZE];
+    __shared__ vector3 sharedAccels[BLOCK_SIZE * BLOCK_SIZE];
+    __shared__ vector3 accelSum[BLOCK_SIZE];
 
 	//Max 12.3.23 12pm
 	//these arrays load each thread's mass, position, and velocity data into the shared memory
-	sharedMass[threadIdx.x] = d_mass[blockRow + row];
-    sharedPos[threadIdx.x] = d_hPos[blockRow + row];
-    sharedVel[threadIdx.x] = d_hVel[blockRow + row];
+	sharedMass[row] = d_mass[blockRow + row];
+    sharedPos[row] = d_hPos[blockRow + row];
+    sharedVel[row] = d_hVel[blockRow + row];
 
 	//Max 12.3.23 12pm
 	//syncs the threads to ensure each block finished loading data into shared memory before procceeding with computation
