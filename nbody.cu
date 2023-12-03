@@ -32,9 +32,9 @@ void initHostMemory(int numObjects)
 //Side Effects: Frees the memory allocated to global variables hVel, hPos, and mass.
 void freeHostMemory()
 {
-	//free(hVel);
-	//free(hPos);
-	//free(mass);
+	free(hVel);
+	free(hPos);
+	free(mass);
 	cudaFree(hVel);
 	cudaFree(hPos);
 	cudaFree(mass);
