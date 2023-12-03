@@ -109,6 +109,15 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
 		// 	hPos[i][k]+=hVel[i][k]*INTERVAL;
 		// }
 	
+	printf("Debug: Thread (%d, %d) - Mass: %f\n", threadIdx.y, threadIdx.x, sharedMass[row]);
+
+    printf("Debug: Thread (%d, %d) - Pos[%d]: %f, %f, %f\n", threadIdx.y, threadIdx.x, row, sharedPos[row][0], sharedPos[row][1], sharedPos[row][2]);
+
+    printf("Debug: Thread (%d, %d) - Vel[%d]: %f, %f, %f\n", threadIdx.y, threadIdx.x, row, sharedVel[row][0], sharedVel[row][1], sharedVel[row][2]);
+
+    printf("Debug: Thread (%d, %d) - AccelSum[%d]: %f, %f, %f\n", threadIdx.y, threadIdx.x, row, accelSum[0], accelSum[1], accelSum[2]);
+
+
 	free(accels);
 	free(values);
 }
