@@ -27,8 +27,8 @@ void initHostMemory(int numObjects)
 	hVel = (vector3 *)malloc(sizeof(vector3) * numObjects);
 	hPos = (vector3 *)malloc(sizeof(vector3) * numObjects);
 	mass = (double *)malloc(sizeof(double) * numObjects);
-	cudaMalloc((void**)&d_accels, sizeof(vector3) * NUMENTITIES * NUMENTITIES);
-    cudaMalloc((void**)&d_accel_sum, sizeof(vector3) * NUMENTITIES);
+	// cudaMalloc((void**)&d_accels, sizeof(vector3) * NUMENTITIES * NUMENTITIES);
+    // cudaMalloc((void**)&d_accel_sum, sizeof(vector3) * NUMENTITIES);
 }
 
 //freeHostMemory: Free storage allocated by a previous call to initHostMemory
@@ -129,7 +129,7 @@ int main(int argc, char **argv)
 	//defined BLOCK_SIZE in config file
 	dim3 blockSize(BLOCK_SIZE,BLOCK_SIZE);
 	//uses blocksize to set up grid dimensions
-	dim3 gridSize(NUMENTITIES / blockSize.x, NUMENTITIES / blockSize.y);
+	dim3 gridSize(NUMENTITIES / BLOCK_SIZE, 1);
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
 
