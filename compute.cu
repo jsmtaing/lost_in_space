@@ -28,7 +28,7 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
     __shared__ double sharedMass[BLOCK_SIZE];
     __shared__ vector3 sharedPos[BLOCK_SIZE];
     __shared__ vector3 sharedVel[BLOCK_SIZE];
-    __shared__ vector3 sharedAccels[BLOCK_SIZE * BLOCK_SIZE][3];
+    __shared__ vector3 sharedAccels[BLOCK_SIZE * BLOCK_SIZE];
 
 
 	//Max 12.3.23 12pm
