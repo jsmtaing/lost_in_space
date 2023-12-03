@@ -76,7 +76,7 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 
 	//
 	 for (int k = 0; k < 3; k++) {
-        sharedVel[row][k] += accelSum[row][k] * INTERVAL;
+        sharedVel[row][k] += accelSum[k] * INTERVAL;
         sharedPos[row][k] += sharedVel[row][k] * INTERVAL;
     }
 
