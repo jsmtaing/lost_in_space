@@ -15,8 +15,6 @@ Max Mazal
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
 __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
-	//make an acceleration matrix which is NUMENTITIES squared in size;
-	int i,j,k;
 
 	//thread indices
 	int row = threadIdx.y;
@@ -24,7 +22,7 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 
 	//block indices
 	int blockRow = blockIdx.y;
-	int blockCol = blockIdx.x;
+	// int blockCol = blockIdx.x;
     
 	//Max 12.3.23 12pm
 	//declares shared memory arrays to store data to be shared among threads within the block
