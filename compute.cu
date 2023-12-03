@@ -64,20 +64,46 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 			}
 		}
 	}
-	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
-	for (i=0;i<NUMENTITIES;i++){
-		vector3 accel_sum={0,0,0};
-		for (j=0;j<NUMENTITIES;j++){
-			for (k=0;k<3;k++)
-				accel_sum[k]+=accels[i][j][k];
-		}
+
+	__syncthreads();
+
+	//gets the sum of the rows of the matrix
+    FILL_VECTOR(accelSum[row], 0, 0, 0);
+
+	//computes pairwise accelerations
+    for (int j = 0; j < NUMENTITIES; j++) {
+        for (int k = 0; k < 3; k++)
+            accelSum[row][k] += accels[row][j][k];
+    }
+
+	//
+	 for (int k = 0; k < 3; k++) {
+        sharedVel[row][k] += accelSum[row][k] * INTERVAL;
+        sharedPos[row][k] += sharedVel[row][k] * INTERVAL;
+    }
+
+	__syncthreads();
+
+	//copies data back to global
+    d_hVel[blockRow + row] = sharedVel[row];
+    d_hPos[blockRow + row] = sharedPos[row];
+
+
+
+	// //sum up the rows of our matrix to get effect on each entity, then update velocity and position.
+	// for (i=0;i<NUMENTITIES;i++){
+	// 	vector3 accel_sum={0,0,0};
+	// 	for (j=0;j<NUMENTITIES;j++){
+	// 		for (k=0;k<3;k++)
+	// 			accel_sum[k]+=accels[i][j][k];
+	// 	}
 		//compute the new velocity based on the acceleration and time interval
 		//compute the new position based on the velocity and time interval
-		for (k=0;k<3;k++){
-			hVel[i][k]+=accel_sum[k]*INTERVAL;
-			hPos[i][k]+=hVel[i][k]*INTERVAL;
-		}
-	}
+		// for (k=0;k<3;k++){
+		// 	hVel[i][k]+=accel_sum[k]*INTERVAL;
+		// 	hPos[i][k]+=hVel[i][k]*INTERVAL;
+		// }
+	
 	free(accels);
 	free(values);
 }
