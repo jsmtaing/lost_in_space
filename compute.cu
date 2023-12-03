@@ -63,7 +63,7 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
 
 	//gets the sum of the rows of the matrix
 	for (int k = 0; k < 3; k++)
-    	sharedAccels[row * BLOCK_SIZE + col][k] = tempAccel[k];
+    	sharedAccels[row * BLOCK_SIZE + col * 3 + k] = tempAccel[k];
 
 
 	__syncthreads();
@@ -71,8 +71,8 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
 	//computes pairwise accelerations
 	vector3 accelSum = {0, 0, 0};
     for (int j = 0; j < BLOCK_SIZE; j++) {
-        for (int k = 0; k < 3; k++)
-            accelSum[k] += sharedAccels[row * BLOCK_SIZE + j][k];
+		for (int k = 0; k < 3; k++)
+			accelSum[k] += sharedAccels[row * BLOCK_SIZE + j * 3 + k];
     }
 
 	//
