@@ -18,16 +18,20 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 	//make an acceleration matrix which is NUMENTITIES squared in size;
 	int i,j,k;
 
-	//thread / block indices
-	//Max 12.3.23 12pm; swapped variables row and column (row corresponds to blockIdx.x and vice versa)
-	int row = blockIdx.x * blockDim.x + threadIdx.x;
-    int col = blockIdx.y * blockDim.y + threadIdx.y;
+	//thread indices
+	int row = threadIdx.x;
+    int col = threadIdx.y;
+
+	//block indices
+	int blockRow = blockIdx.x;
+	int blockCol = blockIdx.y;
     
 	//Max 12.3.23 12pm
 	//declares shared memory arrays to store data to be shared among threads within the block
 	__shared__ double sharedMass[BLOCK_SIZE];
 	__shared__ vector3 sharedPos[BLOCK_SIZE];
     __shared__ vector3 sharedVel[BLOCK_SIZE];
+	__shared__ vector3 sharedAccel[BLOCK_SIZE];
 
 	//Max 12.3.23 12pm
 	//these arrays load each thread's mass, position, and velocity data into the shared memory
