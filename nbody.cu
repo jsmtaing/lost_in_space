@@ -13,7 +13,7 @@
 // represents the objects in the system.  Global variables
 vector3 *hVel, *d_hVel;
 vector3 *hPos, *d_hPos;
-double *mass;
+double *mass, *d_mass;
 //added
 vector3 *d_accels;
 vector3 *d_accel_sum;
