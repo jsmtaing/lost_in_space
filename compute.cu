@@ -14,8 +14,7 @@ Max Mazal
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
-__global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
-
+__global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel, vector3 *d_hPos, double *d_mass) {
 	//thread indices
 	int row = threadIdx.y;
     int col = threadIdx.x;
