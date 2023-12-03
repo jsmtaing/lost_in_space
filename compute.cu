@@ -29,10 +29,10 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 	//Max 12.3.23 12pm
 	//declares shared memory arrays to store data to be shared among threads within the block
     __shared__ double sharedMass[BLOCK_SIZE];
-    __shared__ vector3 sharedPos[2 * BLOCK_SIZE];
+    __shared__ vector3 sharedPos[BLOCK_SIZE];
     __shared__ vector3 sharedVel[BLOCK_SIZE];
     __shared__ vector3 sharedAccels[BLOCK_SIZE * BLOCK_SIZE];
-    __shared__ vector3 accelSum[BLOCK_SIZE];
+
 
 	//Max 12.3.23 12pm
 	//these arrays load each thread's mass, position, and velocity data into the shared memory
@@ -44,36 +44,34 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 	//syncs the threads to ensure each block finished loading data into shared memory before procceeding with computation
 	__syncthreads();
 
-	vector3* values=(vector3*)malloc(sizeof(vector3)*NUMENTITIES*NUMENTITIES);
-	vector3** accels=(vector3**)malloc(sizeof(vector3*)*NUMENTITIES);
-	for (i=0;i<NUMENTITIES;i++)
-		accels[i]=&values[i*NUMENTITIES];
+
 	//first compute the pairwise accelerations.  Effect is on the first argument.
-	for (i=0;i<NUMENTITIES;i++){
-		for (j=0;j<NUMENTITIES;j++){
-			if (i==j) {
-				FILL_VECTOR(accels[i][j],0,0,0);
-			}
-			else{
-				vector3 distance;
-				for (k=0;k<3;k++) distance[k]=hPos[i][k]-hPos[j][k];
-				double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
-				double magnitude=sqrt(magnitude_sq);
-				double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
-				FILL_VECTOR(accels[i][j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
-			}
-		}
-	}
+	vector3 tempAccel = {0, 0, 0};
+    for (int j = 0; j < BLOCK_SIZE; j++){
+        vector3 distance;
+        for (int k = 0; k < 3; k++)
+		distance[k] = sharedPos[row][k] - sharedPos[j][k];
+
+        double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
+        double magnitude = sqrt(magnitude_sq);
+        double accelmag = -1 * GRAV_CONSTANT * sharedMass[j] / magnitude_sq;
+
+        for (int k = 0; k < 3; k++)
+            tempAccel[k] += accelmag * distance[k] / magnitude;
+   	}
 
 	__syncthreads();
 
 	//gets the sum of the rows of the matrix
-    FILL_VECTOR(accelSum[row], 0, 0, 0);
+	sharedAccels[row * BLOCK_SIZE + col] = tempAccel;
+
+	__syncthreads();
 
 	//computes pairwise accelerations
-    for (int j = 0; j < NUMENTITIES; j++) {
+	vector3 accelSum = {0, 0, 0};
+    for (int j = 0; j < BLOCK_SIZE; j++) {
         for (int k = 0; k < 3; k++)
-            accelSum[row][k] += accels[row][j][k];
+            accelSum[k] += sharedAccels[row * BLOCK_SIZE + j][k];
     }
 
 	//
