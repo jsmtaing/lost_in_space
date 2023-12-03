@@ -28,7 +28,7 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
     __shared__ double sharedMass[BLOCK_SIZE];
     __shared__ vector3 sharedPos[BLOCK_SIZE];
     __shared__ vector3 sharedVel[BLOCK_SIZE];
-    __shared__ vector3 sharedAccels[BLOCK_SIZE * BLOCK_SIZE];
+    __shared__ vector3 sharedAccels[BLOCK_SIZE * BLOCK_SIZE][3];
 
 
 	//Max 12.3.23 12pm
@@ -39,10 +39,11 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
     for (int k = 0; k < 3; k++)
     	sharedVel[row][k] = d_hVel[blockRow + row][k];
 
+
+
 	//Max 12.3.23 12pm
 	//syncs the threads to ensure each block finished loading data into shared memory before procceeding with computation
 	__syncthreads();
-
 
 	//first compute the pairwise accelerations.  Effect is on the first argument.
 	vector3 tempAccel = {0, 0, 0};
