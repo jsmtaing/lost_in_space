@@ -15,8 +15,6 @@ Max Mazal
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
 __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
-	//make an acceleration matrix which is NUMENTITIES squared in size;
-	int i,j,k;
 
 	//thread / block indices
 	//Max 12.3.23 12pm
@@ -40,7 +38,6 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 	//syncs the threads to ensure each block finished loading data into shared memory before procceeding with computation
 	__syncthreads();
 
-	__shared__ vector3 accels[BLOCK_SIZE][BLOCK_SIZE];
     __shared__ vector3 accel_sum[BLOCK_SIZE];
 
 	accel_sum[threadIdx.x] = {0, 0, 0};
