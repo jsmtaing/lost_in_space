@@ -40,7 +40,12 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 	//syncs the threads to ensure each block finished loading data into shared memory before procceeding with computation
 	__syncthreads();
 
-	vector3 accel_sum = {0, 0, 0};
+	__shared__ vector3 accels[BLOCK_SIZE][BLOCK_SIZE];
+    __shared__ vector3 accel_sum[BLOCK_SIZE];
+
+	accel_sum[threadIdx.x] = {0, 0, 0};
+
+	__syncthreads();
 
 
 	//first compute the pairwise accelerations.  Effect is on the first argument.
@@ -55,9 +60,11 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
             double accelmag = -1 * GRAV_CONSTANT * sharedMass[threadIdx.x] / magnitude_sq;
 
             for (int k = 0; k < 3; k++)
-                accel_sum[k] += accelmag * distance[k] / magnitude;
+				accel_sum[threadIdx.x][k] += accelmag * distance[k] / magnitude;
         }
     }
+
+	__syncthreads();
 
 	
 	 for (int k = 0; k < 3; k++) {
@@ -67,11 +74,7 @@ __global__ void compute(double *d_mass, vector3 *d_hPos, vector3 *d_hVel){
 
     __syncthreads();
 
-    if (threadIdx.x == 0) {
-        for (int i = 0; i < NUMENTITIES; i++) {
-            d_hVel[col] = sharedVel[i];
-            d_hPos[col] = sharedPos[i];
-        }
-    }
+    d_hVel[col] = sharedVel[threadIdx.x];
+    d_hPos[col] = sharedPos[threadIdx.x];
 }
 
