@@ -88,10 +88,11 @@ void randomFill(int start, int count)
 //Returns: 		none
 //Side Effects: Modifies the file handle by writing to it.
 void printSystem(FILE* handle){
-	
-	
 	int i,j;
-	
+
+
+fprintf(handle,"Thread %d, Block %d\n", threadIdx.x, blockIdx.x);
+
 	for (i=0;i<NUMENTITIES;i++){
 		fprintf(handle,"pos=(");
 		for (j=0;j<3;j++){
