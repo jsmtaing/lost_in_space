@@ -129,6 +129,8 @@ int main(int argc, char **argv)
 		compute();
 	}
 
+	freeCudaMemory();
+
 	clock_t t1 = clock() - t0;
 
 	#ifdef DEBUG
@@ -138,5 +140,4 @@ int main(int argc, char **argv)
 	printf("This took a total time of %f seconds\n", (double)t1/CLOCKS_PER_SEC);
 
 	freeHostMemory();
-	freeCudaMemory();
 }
