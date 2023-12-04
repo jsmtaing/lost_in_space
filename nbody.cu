@@ -94,65 +94,29 @@ void printSystem(FILE* handle){
 
 int main(int argc, char **argv)
 {
-
-	//allocating memory for the device variables
-	cudaMalloc((void**)&d_hVel, sizeof(vector3) * NUMENTITIES);
-	cudaMalloc((void**)&d_hPos, sizeof(vector3) * NUMENTITIES);
-	cudaMalloc((void**)&d_mass, sizeof(double) * NUMENTITIES);
-
-	
-
-	clock_t t0=clock();
+	clock_t t0 = clock();
 	int t_now;
-
 	//srand(time(NULL));
 	srand(1234);
+
 	initHostMemory(NUMENTITIES);
 	planetFill();
-	randomFill(NUMPLANETS + 1, NUMASTEROIDS);
-	//now we have a system.
-	
+	randomFill(NUMPLANETS + 1, NUMASTEROIDS); //Now we have a system!
+
 	#ifdef DEBUG
 	printSystem(stdout);
 	#endif
 
-	//defined BLOCK_SIZE in config file
-	dim3 blockSize(BLOCK_SIZE,BLOCK_SIZE);
-	//uses blocksize to set up grid dimensions
-	dim3 gridSize(NUMENTITIES / BLOCK_SIZE, 1);
-
-	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
-
-		//copy from host to device
-		cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
-		cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
-		cudaMemcpy(d_mass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice);
-
-		//call the compute method with the variables
-		compute<<<gridSize, blockSize>>>(d_accels, d_accel_sum, d_hVel, d_hPos, d_mass);
-
-		//wait for all processes to finish
-		cudaDeviceSynchronize();
-
-		//copy from device back to host
-		cudaMemcpy(hVel, d_hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
-		cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
+	for (t_now = 0; t_now < DURATION; t_now += INTERVAL){
+		compute();
 	}
 
-
-
-
-	clock_t t1=clock()-t0;
+	clock_t t1 = clock() - t0;
 
 	#ifdef DEBUG
 	printSystem(stdout);
 	#endif
-
-	printf("This took a total time of %f seconds\n",(double)t1/CLOCKS_PER_SEC);
-
+	
+	printf("This took a total time of %f seconds\n", (double)t1/CLOCKS_PER_SEC);
 	freeHostMemory();
-	//frees the device variables
-	cudaFree(d_hVel);
-	cudaFree(d_hPos);
-	cudaFree(d_mass);
 }
