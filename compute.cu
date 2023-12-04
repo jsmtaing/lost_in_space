@@ -32,7 +32,7 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
     __shared__ vector3 sharedVel[BLOCK_SIZE];
     __shared__ vector3 sharedAccels[BLOCK_SIZE * BLOCK_SIZE];
 
-	printf("Thread %d, Block %d\n", threadIdx.x, blockIdx.x);
+	cprintf("Thread %d, Block %d\n", threadIdx.x, blockIdx.x);
 
 
 	//Max 12.3.23 12pm
