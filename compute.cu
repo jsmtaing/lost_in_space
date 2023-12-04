@@ -74,7 +74,7 @@ void compute() {
     comp_PA<<<gridDim, blockDim>>>(d_hVel, d_mass, d_accels);
     sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
 
-    printf("Thread %d, Block %d\n\n\n\n\n\n\n\n\n\n\n\n\n\n", threadIdx);
+    printf("Thread %d\n\n\n\n\n\n\n\n\n\n\n\n\n\n", threadIdx);
     cudaDeviceSynchronize();
 
     cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
