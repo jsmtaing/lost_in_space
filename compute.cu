@@ -9,6 +9,8 @@ Max Mazal
 #include <math.h>
 #include "vector.h"
 #include "config.h"
+#include <stdio.h>
+
 
 extern __shared__ double sharedAccels[];
 
