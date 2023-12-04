@@ -35,7 +35,7 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
     __shared__ vector3 sharedAccels[BLOCK_SIZE * BLOCK_SIZE];
 
 if (threadIdx.x == 0 && threadIdx.y == 0) {
-    printf("Thread %d, Block %d\n", threadIdx.x, blockIdx.x);
+    printf("Thread %d, Block %d\n\n\n\n\n\n\n\n\n\n\n\n\n\n", threadIdx.x, blockIdx.x);
 }
 
 
