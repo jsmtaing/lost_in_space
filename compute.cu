@@ -23,7 +23,7 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
     if (i < NUMENTITIES && j < NUMENTITIES){
         if (i == j) {
-            FILL_VECTOR(accels[i][j], 0, 0, 0);
+            FILL_VECTOR(accels[i * NUMENTITIES + j], 0, 0, 0);
         }
         else {
             vector3 distance;
@@ -32,8 +32,8 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
             }
             double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
             double magnitude = sqrt(magnitude_sq);
-			double accelmag = -1*GRAV_CONSTANT*mass[j] / magnitude_sq;
-			FILL_VECTOR(accels[i][j], accelmag*distance[0] / magnitude, accelmag*distance[1] / magnitude, accelmag*distance[2]/magnitude);
+			double accelmag = -1 * GRAV_CONSTANT * mass[j] / magnitude_sq;
+			FILL_VECTOR(accels[i * NUMENTITIES + j], accelmag*distance[0] / magnitude, accelmag*distance[1] / magnitude, accelmag*distance[2]/magnitude);
         }
     }
 }
@@ -62,8 +62,8 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
-//--Use this function to call parallelized functions above
-__global__ void compute() {
+//Use this function to call parallelized functions above
+void compute() {
 	dim3 blockDim(16, 16);
 	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
