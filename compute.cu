@@ -11,7 +11,7 @@ Max Mazal
 #include "config.h"
 #include <stdio.h>
 
-vector3 *d_hPos, *d_hVel, *d_accels, *d_accel_sum;
+vector3 *d_hPos, *d_hVel, *d_accels;
 double *d_mass;
 
 //Function that computes the pairwise accelerations. Effect is on the first argument.
