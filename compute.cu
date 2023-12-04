@@ -9,6 +9,8 @@ Max Mazal
 #include <math.h>
 #include "vector.h"
 #include "config.h"
+
+//temporary library
 #include <stdio.h>
 
 vector3 *d_hPos, *d_hVel, *d_accels;
@@ -71,6 +73,8 @@ void compute() {
 
     comp_PA<<<gridDim, blockDim>>>(d_hVel, d_mass, d_accels);
     sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
+    
+    printf("Thread %d, Block %d\n\n\n\n\n\n\n\n\n\n\n\n\n\n", threadIdx.x, blockIdx.x);
     cudaDeviceSynchronize();
 
     cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
