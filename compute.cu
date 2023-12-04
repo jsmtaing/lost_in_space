@@ -18,7 +18,9 @@ double *d_mass;
 __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = blockIdx.x * blockDim.x + threadIdx.x;
-
+    
+    //This part was just C+P'd from the original compute.c -- only change is
+    //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
     if (i < NUMENTITIES && j < NUMENTITIES){
         if (i == j) {
             FILL_VECTOR(accels[i][j], 0, 0, 0);
@@ -37,10 +39,24 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 }
 
 //Function to sum rows of the matrix, then update velocity/position.
-__global__ void sum_update(){
-    int j = blockIdx.x * blockDim.x + threadIdx.x;
+__global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
+    //this part is also just C and P'd from the original compute.c
+    //sum up the rows of our matrix to get effect on each entity, then update velocity and position.
+	if (i = 0; i < NUMENTITIES; i++){
+		vector3 accel_sum = {0, 0, 0};
+		for (j = 0; j < NUMENTITIES ; j++){
+			for (k = 0; k < 3; k++){
+				accel_sum[k] += accels[i][j][k];
+            }
+		}
+		//compute the new velocity based on the acceleration and time interval
+		//compute the new position based on the velocity and time interval
+		for (k = 0; k < 3; k++){
+			hVel[i][k] += accel_sum[k] * INTERVAL;
+			hPos[i][k] += hVel[i][k] * INTERVAL;
+		}
+	}
 }
-
 
 //compute: Updates the positions and locations of the objects in the system based on gravity.
 //Parameters: None
@@ -52,6 +68,7 @@ void compute() {
 	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
     comp_PA<<gridDim, blockDim>>(d_hVel, d_mass, d_accels);
+    sum_update<<gridDim, blockDim>>(d_hVel, d_hPos, d_accels);
     cudaDeviceSynchronize();
 
     cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
