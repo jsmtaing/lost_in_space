@@ -77,7 +77,7 @@ void planetFill(){
 //Side Effects: Fills count entries in our system starting at index start (0 based)
 void randomFill(int start, int count)
 {
-	int i, j, c = start;
+	int i, j = start;
 	for (i = start; i < start + count; i++)
 	{
 		for (j = 0; j < 3; j++)
