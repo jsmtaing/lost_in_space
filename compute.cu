@@ -31,7 +31,7 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
                 distance[k] = hPos[i][k] - hPos[j][k];
             }
             double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
-            double magnitude = =sqrt(magnitude_sq);
+            double magnitude = sqrt(magnitude_sq);
 			double accelmag = -1*GRAV_CONSTANT*mass[j] / magnitude_sq;
 			FILL_VECTOR(accels[i][j], accelmag*distance[0] / magnitude, accelmag*distance[1] / magnitude, accelmag*distance[2]/magnitude);
         }
@@ -45,7 +45,7 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
 	if (i = 0; i < NUMENTITIES; i++){
 		vector3 accel_sum = {0, 0, 0};
 		for (j = 0; j < NUMENTITIES ; j++){
-			for (k = 0; k < 3; k++){
+			for (int k = 0; k < 3; k++){
 				accel_sum[k] += accels[i][j][k];
             }
 		}
@@ -63,7 +63,7 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
 //--Use this function to call parallelized functions above
-void compute() {
+__global__ void compute() {
 	dim3 blockDim(16, 16);
 	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
