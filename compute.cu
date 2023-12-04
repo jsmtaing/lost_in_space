@@ -42,7 +42,7 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
     //this part is also just C and P'd from the original compute.c
     //sum up the rows of our matrix to get effect on each entity, then update velocity and position.
-	if (int i = 0; i < NUMENTITIES; i++){
+	if (i < NUMENTITIES){
 		vector3 accel_sum = {0, 0, 0};
 		for (int j = 0; j < NUMENTITIES ; j++){
 			for (int k = 0; k < 3; k++){
