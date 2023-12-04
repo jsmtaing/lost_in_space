@@ -10,14 +10,16 @@ Max Mazal
 #include "vector.h"
 #include "config.h"
 
+extern __shared__ double sharedAccels[];
+
 //compute: Updates the positions and locations of the objects in the system based on gravity.
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
 __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel, vector3 *d_hPos, double *d_mass) {
 	//thread indices
-	int row = threadIdx.y;
-    int col = threadIdx.x;
+	int row = threadIdx.y + blockIdx.y * blockDim.y;
+    int col = threadIdx.x + blockIdx.x * blockDim.x;
 
 	//block indices
 	int blockRow = blockIdx.y;
@@ -33,11 +35,11 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
 
 	//Max 12.3.23 12pm
 	//these arrays load each thread's mass, position, and velocity data into the shared memory (respectively)
-	sharedMass[row] = d_mass[blockRow + row];
+	sharedMass[threadIdx.y] = d_mass[row];
     for (int k = 0; k < 3; k++)
-    	sharedPos[row][k] = d_hPos[blockRow + row][k];
+    	sharedPos[threadIdx.y][k] = d_hPos[row][k];
     for (int k = 0; k < 3; k++)
-    	sharedVel[row][k] = d_hVel[blockRow + row][k];
+    	sharedVel[threadIdx.y][k] = d_hVel[row][k];
 
 
 
@@ -64,8 +66,7 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
 
 	//gets the sum of the rows of the matrix
 	for (int k = 0; k < 3; k++)
-    	sharedAccels[row * BLOCK_SIZE + col][k] = tempAccel[k];
-
+        sharedAccels[threadIdx.y * BLOCK_SIZE + threadIdx.x][k] = tempAccel[k];
 
 	__syncthreads();
 
@@ -73,22 +74,22 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
 	vector3 accelSum = {0, 0, 0};
     for (int j = 0; j < BLOCK_SIZE; j++) {
         for (int k = 0; k < 3; k++)
-            accelSum[k] += sharedAccels[row * BLOCK_SIZE + j][k];
+            accelSum[k] += sharedAccels[threadIdx.y * BLOCK_SIZE + j][k];
     }
 
-	//
+	//updates velocity and position
 	 for (int k = 0; k < 3; k++) {
-        sharedVel[row][k] += accelSum[k] * INTERVAL;
-        sharedPos[row][k] += sharedVel[row][k] * INTERVAL;
+        sharedVel[threadIdx.y][k] += accelSum[k] * INTERVAL;
+        sharedPos[threadIdx.y][k] += sharedVel[threadIdx.y][k] * INTERVAL;
     }
 
 	__syncthreads();
 
-	//copies data back to global
+    //copies data back to global memory
     for (int k = 0; k < 3; k++) {
-		d_hVel[blockRow + row][k] = sharedVel[row][k];
-		d_hPos[blockRow + row][k] = sharedPos[row][k];
-	}
+        d_hVel[row][k] = sharedVel[threadIdx.y][k];
+        d_hPos[row][k] = sharedPos[threadIdx.y][k];
+    }
 
 	vector3* values = (vector3*)malloc(sizeof(vector3) * NUMENTITIES * NUMENTITIES);
     vector3** accels = (vector3**)malloc(sizeof(vector3*) * NUMENTITIES);
