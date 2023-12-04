@@ -72,6 +72,10 @@ void compute() {
 	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
     comp_PA<<<gridDim, blockDim>>>(d_hVel, d_mass, d_accels);
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) 
+        printf("Error: %s\n", cudaGetErrorString(err));
+
     sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
 
     cudaDeviceSynchronize();
