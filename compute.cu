@@ -109,7 +109,7 @@ __global__ void compute(vector3 *d_accels, vector3 *d_accel_sum, vector3 *d_hVel
 			hVel[i][k]+=accel_sum[k]*INTERVAL;
 			hPos[i][k]+=hVel[i][k]*INTERVAL;
 		}
-
+	}
 
 	for (int i = 0; i < NUMENTITIES; i++)
     	delete[] accels[i];
