@@ -14,7 +14,7 @@ Max Mazal
 vector3 *d_hPos, *d_hVel, *d_accels, *d_accel_sum;
 double *d_mass;
 
-//Function to compute the pairwise accelerations. Effect is on the first argument.
+//Function that computes the pairwise accelerations. Effect is on the first argument.
 __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = blockIdx.x * blockDim.x + threadIdx.x;
@@ -37,6 +37,10 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 }
 
 //Function to sum rows of the matrix, then update velocity/position.
+__global__ void sum_update(){
+    int j = blockIdx.x * blockDim.x + threadIdx.x;
+}
+
 
 //compute: Updates the positions and locations of the objects in the system based on gravity.
 //Parameters: None
@@ -44,6 +48,13 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
 //--Use this function to call parallelized functions above
 void compute() {
-	
+	dim3 blockDim(16, 16);
+	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
+
+    comp_PA<<gridDim, blockDim>>(d_hVel, d_mass, d_accels);
+    cudaDeviceSynchronize();
+
+    cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
+	cudaMemcpy(hVel, d_hVel, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
 }
 
