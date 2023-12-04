@@ -37,6 +37,22 @@ void freeHostMemory()
 	free(mass);
 }
 
+//Function to initialize cuda memory variables.
+void initCudaMemory(int numObjects)
+{
+	cudaMalloc((void**)&d_hVel, sizeof(vector3) * numObjects);
+	cudaMalloc((void**)&d_hPos, sizeof(vector3) * numObjects);
+	cudaMalloc((void**)&d_mass, sizeof(double) * numObjects);
+}
+
+//Function to free storage allocated by a previous call to initCudaMemory.
+void freeCudaMemory()
+{
+	cudaFree(d_hVel);
+	cudaFree(d_hPos);
+	cudaFree(d_mass);
+}
+
 //planetFill: Fill the first NUMPLANETS+1 entries of the entity arrays with an estimation
 //				of our solar system (Sun+NUMPLANETS)
 //Parameters: None
@@ -107,6 +123,8 @@ int main(int argc, char **argv)
 	printSystem(stdout);
 	#endif
 
+	initCudaMemory(NUMENTITIES);
+
 	for (t_now = 0; t_now < DURATION; t_now += INTERVAL){
 		compute();
 	}
@@ -118,5 +136,7 @@ int main(int argc, char **argv)
 	#endif
 	
 	printf("This took a total time of %f seconds\n", (double)t1/CLOCKS_PER_SEC);
+
 	freeHostMemory();
+	freeCudaMemory();
 }
