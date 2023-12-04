@@ -67,8 +67,8 @@ __global__ void compute() {
 	dim3 blockDim(16, 16);
 	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
-    comp_PA<<gridDim, blockDim>>(d_hVel, d_mass, d_accels);
-    sum_update<<gridDim, blockDim>>(d_hVel, d_hPos, d_accels);
+    comp_PA<<<gridDim, blockDim>>>(d_hVel, d_mass, d_accels);
+    sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
     cudaDeviceSynchronize();
 
     cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
