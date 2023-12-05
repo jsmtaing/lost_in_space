@@ -20,6 +20,7 @@ double *d_mass;
 __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = blockIdx.x * blockDim.x + threadIdx.x;
+    int k;
     
     //This part was just C+P'd from the original compute.c -- only change is
     //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
@@ -29,7 +30,7 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
         }
         else {
             vector3 distance;
-            for (int k = 0; k < 3; k++){
+            for (k = 0; k < 3; k++){
                 distance[k] = hPos[i][k] - hPos[j][k];
             }
             double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
@@ -45,17 +46,18 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
     //this part is also just C and P'd from the original compute.c
     //sum up the rows of our matrix to get effect on each entity, then update velocity and position.
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int j, k;
 
     if (i < NUMENTITIES){
 		vector3 accel_sum = {0, 0, 0};
-		for (int j = 0; j < NUMENTITIES ; j++){
-			for (int k = 0; k < 3; k++){
+		for (j = 0; j < NUMENTITIES ; j++){
+			for (k = 0; k < 3; k++){
 				accel_sum[k] += accels[i * NUMENTITIES + j][k];
             }
 		}
 		//compute the new velocity based on the acceleration and time interval
 		//compute the new position based on the velocity and time interval
-		for (int k = 0; k < 3; k++){
+		for (k = 0; k < 3; k++){
 			hVel[i][k] += accel_sum[k] * INTERVAL;
 			hPos[i][k] += hVel[i][k] * INTERVAL;
 		}
