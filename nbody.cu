@@ -128,6 +128,9 @@ int main(int argc, char **argv)
 	srand(1234);
 
 	initHostMemory(NUMENTITIES);
+	initCudaMemory(NUMENTITIES);
+	copyCudaMemory(NUMENTITIES);
+
 	planetFill();
 	randomFill(NUMPLANETS + 1, NUMASTEROIDS); //Now we have a system!
 
@@ -135,14 +138,10 @@ int main(int argc, char **argv)
 	printSystem(stdout);
 	#endif
 
-	initCudaMemory(NUMENTITIES);
-	copyCudaMemory(NUMENTITIES);
-
+	//printf("Starting compute() loop now...");
 	for (t_now = 0; t_now < DURATION; t_now += INTERVAL){
 		compute();
 	}
-
-	freeCudaMemory();
 
 	clock_t t1 = clock() - t0;
 
@@ -151,6 +150,7 @@ int main(int argc, char **argv)
 	#endif
 	
 	printf("This took a total time of %f seconds\n", (double)t1/CLOCKS_PER_SEC);
-
+	
+	freeCudaMemory();
 	freeHostMemory();
 }
