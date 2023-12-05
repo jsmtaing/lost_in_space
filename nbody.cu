@@ -43,6 +43,16 @@ void initCudaMemory(int numObjects)
 	cudaMalloc((void**)&d_hVel, sizeof(vector3) * numObjects);
 	cudaMalloc((void**)&d_hPos, sizeof(vector3) * numObjects);
 	cudaMalloc((void**)&d_mass, sizeof(double) * numObjects);
+
+	cudaMalloc((void**)&d_accels, sizeof(vector3) * numObjects);
+}
+
+//Function to do the cudaMemCpy's.
+void copyCudaMemory(int numObjects)
+{
+	cudaMemCpy(d_hVel, hVel, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
+	cudaMemCpy(d_hPos, hPos, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
+	cudaMemCpy(d_mass, mass, sizeof(double) * numObjects, cudaMemcpyHostToDevice);
 }
 
 //Function to free storage allocated by a previous call to initCudaMemory.
@@ -51,6 +61,8 @@ void freeCudaMemory()
 	cudaFree(d_hVel);
 	cudaFree(d_hPos);
 	cudaFree(d_mass);
+
+	cudaFree(d_accels);
 }
 
 //planetFill: Fill the first NUMPLANETS+1 entries of the entity arrays with an estimation
@@ -124,6 +136,7 @@ int main(int argc, char **argv)
 	#endif
 
 	initCudaMemory(NUMENTITIES);
+	copyCudaMemory(NUMENTITIES);
 
 	for (t_now = 0; t_now < DURATION; t_now += INTERVAL){
 		compute();
