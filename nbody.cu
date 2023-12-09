@@ -50,9 +50,9 @@ void initCudaMemory(int numObjects)
 //Function to do the cudaMemCpy's.
 void copyCudaMemory(int numObjects)
 {
-	cudaMemCpy(d_hVel, hVel, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
-	cudaMemCpy(d_hPos, hPos, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
-	cudaMemCpy(d_mass, mass, sizeof(double) * numObjects, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_mass, mass, sizeof(double) * numObjects, cudaMemcpyHostToDevice);
 }
 
 //Function to free storage allocated by a previous call to initCudaMemory.

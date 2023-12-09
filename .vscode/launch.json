@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/maxki/CISC372 lostinspace/lost_in_space",
-      "program": "c:/Users/maxki/CISC372 lostinspace/lost_in_space/build/Debug/outDebug",
+      "cwd": "c:/Users/maxki/lostinspace/lost_in_space",
+      "program": "c:/Users/maxki/lostinspace/lost_in_space/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
