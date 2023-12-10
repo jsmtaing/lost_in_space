@@ -30,11 +30,12 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     shared_hPos[threadIdx.x][1] = d_hPos[i][1]; 
     shared_hPos[threadIdx.x][2] = d_hPos[i][2];
     
-    if(threadIdx.x == 0) {
-        shared_mass[threadIdx.y] = d_mass[blockIdx.y*blockDim.y+threadIdx.y]; 
+        if(threadIdx.x == 0) {
+            shared_mass[threadIdx.y] = d_mass[blockIdx.y*blockDim.y+threadIdx.y]; 
+        }
+        
+        __syncthreads();
     }
-    
-    __syncthreads();
     
     //This part was just C+P'd from the original compute.c -- only change is
     //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
