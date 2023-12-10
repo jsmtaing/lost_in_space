@@ -60,11 +60,11 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
     int j, k;
 
     //initialize
-    __shared__ vector3 shared_accels[BLOCK_SIZE];
+    __shared__ vector3 shared_accels[BLOCK_SIZE][BLOCK_SIZE];
 
     //laod vlaues into shared memory
     for (k = 0; k < 3; k++) {
-        shared_accels[threadIdx.x][k] = accels[i * NUMENTITIES + threadIdx.x][k];
+        shared_accels[threadIdx.x][threadIdx.y][k] = accels[i * NUMENTITIES + threadIdx.x][k];
     }
     __syncthreads();
 
