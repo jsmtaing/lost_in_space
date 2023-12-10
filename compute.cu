@@ -13,8 +13,8 @@ Max Mazal
 //temporary library
 #include <stdio.h>
 
-vector3 *d_hPos, *d_hVel, *d_accels;
-double *d_mass;
+__shared__ vector3 *d_hPos, *d_hVel, *d_accels;
+__shared__ double *d_mass;
 
 //Function that computes the pairwise accelerations. Effect is on the first argument.
 __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
