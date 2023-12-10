@@ -146,6 +146,7 @@ int main(int argc, char **argv)
 	clock_t t1 = clock() - t0;
 
 	#ifdef DEBUG
+	printf("\nPrinting parallelized system.\n");
 	printSystem(stdout);
 	#endif
 	
