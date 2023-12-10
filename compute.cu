@@ -72,7 +72,7 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
 		vector3 accel_sum = {0, 0, 0};
 		for (j = 0; j < NUMENTITIES ; j++){
 			for (k = 0; k < 3; k++){
-                accel_sum[k] += shared_accels[threadIdx.x][k];
+                accel_sum[k] += shared_accels[threadIdx.x][threadIdx.y][k];
             }
 		}
 		//compute the new velocity based on the acceleration and time interval
