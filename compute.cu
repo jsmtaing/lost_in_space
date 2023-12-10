@@ -42,7 +42,7 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
         else {
             vector3 distance;
             for (k = 0; k < 3; k++){
-                distance[k] = shared_hPos[threadIdx.y][threadIdx.x][k] - hPos[j * NUMENTITIES + threadIdx.x][k];
+                distance[k] = shared_hPos[threadIdx.x][k] - hPos[j * NUMENTITIES + threadIdx.x][k];            
             }
             double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
             double magnitude = sqrt(magnitude_sq);
