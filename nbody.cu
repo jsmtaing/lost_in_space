@@ -124,15 +124,14 @@ int main(int argc, char **argv)
 {
 	clock_t t0 = clock();
 	int t_now;
-	//srand(time(NULL));
 	srand(1234);
 
 	initHostMemory(NUMENTITIES);
-	initCudaMemory(NUMENTITIES);
-	copyCudaMemory(NUMENTITIES);
-
 	planetFill();
 	randomFill(NUMPLANETS + 1, NUMASTEROIDS); //Now we have a system!
+
+	initCudaMemory(NUMENTITIES);
+	copyCudaMemory(NUMENTITIES);
 
 	#ifdef DEBUG
 	printSystem(stdout);
@@ -143,6 +142,7 @@ int main(int argc, char **argv)
 		compute();
 	}
 
+	freeCudaMemory();
 	clock_t t1 = clock() - t0;
 
 	#ifdef DEBUG
@@ -150,7 +150,5 @@ int main(int argc, char **argv)
 	#endif
 	
 	printf("This took a total time of %f seconds\n", (double)t1/CLOCKS_PER_SEC);
-	
-	freeCudaMemory();
 	freeHostMemory();
 }
