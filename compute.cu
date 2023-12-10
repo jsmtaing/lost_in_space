@@ -21,21 +21,6 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = blockIdx.x * blockDim.x + threadIdx.x;
     int k;
-
-    __shared__ vector3 shared_hPos[BLOCK_SIZE];
-    __shared__ double shared_mass[BLOCK_SIZE];
-
-    for(int i = threadIdx.x; i < NUMENTITIES; i += blockDim.x) {
-    shared_hPos[threadIdx.x][0] = d_hPos[i][0];
-    shared_hPos[threadIdx.x][1] = d_hPos[i][1]; 
-    shared_hPos[threadIdx.x][2] = d_hPos[i][2];
-    
-        if(threadIdx.x == 0) {
-            shared_mass[threadIdx.y] = d_mass[blockIdx.y*blockDim.y+threadIdx.y]; 
-        }
-        
-        __syncthreads();
-    }
     
     //This part was just C+P'd from the original compute.c -- only change is
     //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
@@ -46,11 +31,11 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
         else {
             vector3 distance;
             for (k = 0; k < 3; k++){
-                distance[k] = shared_hPos[threadIdx.x][k] - hPos[j * NUMENTITIES + threadIdx.x][k];            
+                distance[k] = hPos[i][k] - hPos[j][k];
             }
             double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
             double magnitude = sqrt(magnitude_sq);
-			double accelmag = -1 * GRAV_CONSTANT * shared_mass[threadIdx.x * NUMENTITIES + j] / magnitude_sq;
+			double accelmag = -1 * GRAV_CONSTANT * mass[j] / magnitude_sq;
 			FILL_VECTOR(accels[i * NUMENTITIES + j], accelmag*distance[0] / magnitude, accelmag*distance[1] / magnitude, accelmag*distance[2]/magnitude);
         }
     }
@@ -63,23 +48,11 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j, k;
 
-    //initialize
-    __shared__ vector3 shared_accels[BLOCK_SIZE];
-
-    //load accels into shared memory
-    __syncthreads();
-
-    if(threadIdx.x == 0) {
-    atomicAdd(&accel_sum[0], shared_accels[threadIdx.y][0]);  
-    atomicAdd(&accel_sum[1], shared_accels[threadIdx.y][1]);
-    atomicAdd(&accel_sum[2], shared_accels[threadIdx.y][2]);  
-    }
-
     if (i < NUMENTITIES){
 		vector3 accel_sum = {0, 0, 0};
 		for (j = 0; j < NUMENTITIES ; j++){
 			for (k = 0; k < 3; k++){
-                accel_sum[k] += shared_accels[threadIdx.x][threadIdx.y][k];
+				accel_sum[k] += accels[i * NUMENTITIES + j][k];
             }
 		}
 		//compute the new velocity based on the acceleration and time interval
