@@ -79,6 +79,10 @@ void compute() {
         printf("Error: %s\n", cudaGetErrorString(err));
 
     sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) 
+        printf("Error: %s\n", cudaGetErrorString(err));
+        
     cudaDeviceSynchronize();
 
     cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
