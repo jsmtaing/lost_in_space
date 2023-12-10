@@ -22,15 +22,18 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int j = blockIdx.x * blockDim.x + threadIdx.x;
     int k;
 
-    //initailizing shared values for hpos and mass
     __shared__ vector3 shared_hPos[BLOCK_SIZE];
     __shared__ double shared_mass[BLOCK_SIZE];
 
-    //code loads values into shared memory
-    for (k = 0; k < 3; k++) {
-        shared_hPos[threadIdx.x][k] = hPos[i * NUMENTITIES + threadIdx.x][k];
+    for(int i = threadIdx.x; i < NUMENTITIES; i += blockDim.x) {
+    shared_hPos[threadIdx.x][0] = d_hPos[i][0];
+    shared_hPos[threadIdx.x][1] = d_hPos[i][1]; 
+    shared_hPos[threadIdx.x][2] = d_hPos[i][2];
+    
+    if(threadIdx.x == 0) {
+        shared_mass[threadIdx.y] = d_mass[blockIdx.y*blockDim.y+threadIdx.y]; 
     }
-    shared_mass[threadIdx.x * NUMENTITIES + j] = mass[j];
+    
     __syncthreads();
     
     //This part was just C+P'd from the original compute.c -- only change is
@@ -60,13 +63,16 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
     int j, k;
 
     //initialize
-    __shared__ vector3 shared_accels[BLOCK_SIZE][BLOCK_SIZE];
+    __shared__ vector3 shared_accels[BLOCK_SIZE];
 
-    //laod vlaues into shared memory
-    for (k = 0; k < 3; k++) {
-        shared_accels[threadIdx.x][threadIdx.y][k] = accels[i * NUMENTITIES + threadIdx.x][k];
-    }
+    //load accels into shared memory
     __syncthreads();
+
+    if(threadIdx.x == 0) {
+    atomicAdd(&accel_sum[0], shared_accels[threadIdx.y][0]);  
+    atomicAdd(&accel_sum[1], shared_accels[threadIdx.y][1]);
+    atomicAdd(&accel_sum[2], shared_accels[threadIdx.y][2]);  
+    }
 
     if (i < NUMENTITIES){
 		vector3 accel_sum = {0, 0, 0};
