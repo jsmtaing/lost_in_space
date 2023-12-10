@@ -21,6 +21,15 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = blockIdx.x * blockDim.x + threadIdx.x;
     int k;
+
+    //initailizing shared values for hpos and mass
+    __shared__ vector3 shared_hPos[BLOCK_SIZE][BLOCK_SIZE];
+    __shared__ double shared_mass[BLOCK_SIZE];
+
+    //code loads values into shared memory
+    shared_hPos[threadIdx.y][threadIdx.x] = hPos[i];
+    shared_mass[threadIdx.x] = mass[j];
+    __syncthreads();
     
     //This part was just C+P'd from the original compute.c -- only change is
     //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
@@ -47,6 +56,13 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
     //sum up the rows of our matrix to get effect on each entity, then update velocity and position.
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j, k;
+
+    //initialize
+    __shared__ vector3 shared_accels[BLOCK_SIZE][BLOCK_SIZE];
+
+    //laod vlaues into shared memory
+    shared_accels[threadIdx.y][threadIdx.x] = accels[i];
+    __syncthreads();
 
     if (i < NUMENTITIES){
 		vector3 accel_sum = {0, 0, 0};
