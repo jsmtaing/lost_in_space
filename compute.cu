@@ -23,14 +23,14 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int k;
 
     //initailizing shared values for hpos and mass
-    __shared__ vector3 shared_hPos[BLOCK_SIZE][BLOCK_SIZE];
+    __shared__ vector3 shared_hPos[BLOCK_SIZE];
     __shared__ double shared_mass[BLOCK_SIZE];
 
     //code loads values into shared memory
     for (k = 0; k < 3; k++) {
-    shared_hPos[threadIdx.y][threadIdx.x][k] = hPos[i][k];
-}
-    shared_mass[threadIdx.x] = mass[j];
+        shared_hPos[threadIdx.x][k] = hPos[i * NUMENTITIES + threadIdx.x][k];
+    }
+    shared_mass[threadIdx.x * NUMENTITIES + j] = mass[j];
     __syncthreads();
     
     //This part was just C+P'd from the original compute.c -- only change is
@@ -42,11 +42,11 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
         else {
             vector3 distance;
             for (k = 0; k < 3; k++){
-                distance[k] = shared_hPos[threadIdx.y][threadIdx.x][k] - hPos[j][k];
+                distance[k] = shared_hPos[threadIdx.y][threadIdx.x][k] - hPos[j * NUMENTITIES + threadIdx.x][k];
             }
             double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
             double magnitude = sqrt(magnitude_sq);
-			double accelmag = -1 * GRAV_CONSTANT * shared_mass[threadIdx.x] / magnitude_sq;
+			double accelmag = -1 * GRAV_CONSTANT * shared_mass[threadIdx.x * NUMENTITIES + j] / magnitude_sq;
 			FILL_VECTOR(accels[i * NUMENTITIES + j], accelmag*distance[0] / magnitude, accelmag*distance[1] / magnitude, accelmag*distance[2]/magnitude);
         }
     }
@@ -60,11 +60,11 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
     int j, k;
 
     //initialize
-    __shared__ vector3 shared_accels[BLOCK_SIZE][BLOCK_SIZE];
+    __shared__ vector3 shared_accels[BLOCK_SIZE];
 
     //laod vlaues into shared memory
     for (k = 0; k < 3; k++) {
-        shared_accels[threadIdx.y][threadIdx.x][k] = accels[i][k];
+        shared_accels[threadIdx.x][k] = accels[i * NUMENTITIES + threadIdx.x][k];
     }
     __syncthreads();
 
@@ -72,7 +72,7 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
 		vector3 accel_sum = {0, 0, 0};
 		for (j = 0; j < NUMENTITIES ; j++){
 			for (k = 0; k < 3; k++){
-                accel_sum[k] += shared_accels[threadIdx.y][threadIdx.x][k];
+                accel_sum[k] += shared_accels[threadIdx.x][k];
             }
 		}
 		//compute the new velocity based on the acceleration and time interval
