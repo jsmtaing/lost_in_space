@@ -69,19 +69,20 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
 //Use this function to call parallelized functions above
 void compute() {
-	dim3 blockDim(16, 16);
-	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
+	// dim3 blockDim(16, 16);
+	// dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
-    comp_PA<<<gridDim, blockDim>>>(d_hPos, d_mass, d_accels);
-    //cudaDeviceSynchronize();
-    //cudaError_t err = cudaGetLastError();
-    //if (err != cudaSuccess) 
-    //    printf("Error: %s\n", cudaGetErrorString(err));
+    // comp_PA<<<gridDim, blockDim>>>(d_hPos, d_mass, d_accels);
 
-    sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
-    cudaDeviceSynchronize();
+    // //cudaDeviceSynchronize();
+    // //cudaError_t err = cudaGetLastError();
+    // //if (err != cudaSuccess) 
+    // //    printf("Error: %s\n", cudaGetErrorString(err));
 
-    cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
-	cudaMemcpy(hVel, d_hVel, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
-    //cudaMemcpy(mass, d_mass, sizeof(double)*NUMENTITIES, cudaMemcpyDeviceToHost);
+    // sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
+    // cudaDeviceSynchronize();
+
+    // cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
+	// cudaMemcpy(hVel, d_hVel, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
+    // //cudaMemcpy(mass, d_mass, sizeof(double)*NUMENTITIES, cudaMemcpyDeviceToHost);
 }
