@@ -32,7 +32,7 @@ __global__ void comp_PA(vector3* hPos, double* mass, vector3** accels){
         else {
             vector3 d; //distance
             for (int k = 0; k < 3; k++){
-                distance[k] = hPos[i][k] - hPos[j][k];
+                d[k] = hPos[i][k] - hPos[j][k];
             }
             double magnitude_sq = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
             double mag = sqrt(magnitude_sq);
@@ -73,7 +73,7 @@ void compute() {
 
     vector3* d_hVel;
     vector3* d_hPos;
-    vector** d_accels;
+    vector3** d_accels;
     double* d_mass;
 
     cudaMalloc((void**)&d_hVel, sizeof(vector3) * NUMENTITIES);
