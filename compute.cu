@@ -53,21 +53,20 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
     if (i >= NUMENTITIES) {
 		return;
 	}
-
-    vector3 accel_sum = {0, 0, 0};
-    for (int j = 0; j < NUMENTITIES ; j++){
+    else {
+        vector3 accel_sum = {0, 0, 0};
+        for (int j = 0; j < NUMENTITIES ; j++){
+            for (int k = 0; k < 3; k++) {
+                accel_sum[k] += accels[i * NUMENTITIES + j][k];
+            }
+        }
+        //compute the new velocity based on the acceleration and time interval
+        //compute the new position based on the velocity and time interval
         for (int k = 0; k < 3; k++) {
-            accel_sum[k] += accels[i * NUMENTITIES + j][k];
             hVel[i][k] += accel_sum[k] * INTERVAL;
             hPos[i][k] += hVel[i][k] * INTERVAL;
         }
     }
-    //compute the new velocity based on the acceleration and time interval
-    //compute the new position based on the velocity and time interval
-    //for (int k = 0; k < 3; k++) {
-        //hVel[i][k] += accel_sum[k] * INTERVAL;
-        //hPos[i][k] += hVel[i][k] * INTERVAL;
-    //}
 }
 
 //compute: Updates the positions and locations of the objects in the system based on gravity.
