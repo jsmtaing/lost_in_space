@@ -47,11 +47,7 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 //Function to sum rows of the matrix, then update velocity/position.
 __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
 
-    //error check:
-    cudaError_t err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        printf("Error: %s\n", cudaGetErrorString(err));
-    }
+
 
     
     int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -86,11 +82,12 @@ void compute() {
 
     comp_PA<<<gridDim, blockDim>>>(d_hPos, d_mass, d_accels);
     cudaDeviceSynchronize();
-    //cudaError_t err = cudaGetLastError();
-    //if (err != cudaSuccess) 
-    //    printf("Error: %s\n", cudaGetErrorString(err));
+
 
     sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) 
+       printf("Error: %s\n", cudaGetErrorString(err));
     //cudaDeviceSynchronize();
 
     cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
