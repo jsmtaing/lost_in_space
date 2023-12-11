@@ -42,13 +42,16 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 
 //Function to sum rows of the matrix, then update velocity/position.
 __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
-    //this part is also just C and P'd from the original compute.c
-    //sum up the rows of our matrix to get effect on each entity, then update velocity and position.
-    int i = blockIdx.y * blockDim.y + threadIdx.y;
-    int k = threadIdx.z;
 
+    //sum up the rows of our matrix to get effect on each entity, then update velocity and position.
+    //gets the global index of the thread in 2D array
+    int i = blockIdx.y * blockDim.y + threadIdx.y;
+    int k = threadIdx.x;
+
+    //thread operates only on valid indices
     if (i < NUMENTITIES)
     {
+        //updates the velocity and position
         hVel[i][k] += accels[i][k] * INTERVAL;
         hPos[i][k] += hVel[i][k] * INTERVAL;
         accels[i * NUMENTITIES + k][k] = 0;
