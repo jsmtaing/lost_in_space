@@ -47,22 +47,22 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 //Function to sum rows of the matrix, then update velocity/position.
 __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
 
-    //index
-    int i = blockIdx.y * blockDim.y + threadIdx.y;
-    int k = threadIdx.x;
+    // //index
+    // int i = blockIdx.y * blockDim.y + threadIdx.y;
+    // int k = threadIdx.x;
 
-    if (i >= NUMENTITIES) {
-		return;
-	}
+    // if (i >= NUMENTITIES) {
+	// 	return;
+	// }
 
-    vector3 accel_sum = {0, 0, 0};
-    for (int j = 0; j < NUMENTITIES ; j++){
-            accel_sum[k] += accels[i * NUMENTITIES + j][k];
-    }
-    //compute the new velocity based on the acceleration and time interval
-    //compute the new position based on the velocity and time interval
-        hVel[i][k] += accel_sum[k] * INTERVAL;
-        hPos[i][k] += hVel[i][k] * INTERVAL;
+    // vector3 accel_sum = {0, 0, 0};
+    // for (int j = 0; j < NUMENTITIES ; j++){
+    //         accel_sum[k] += accels[i * NUMENTITIES + j][k];
+    // }
+    // //compute the new velocity based on the acceleration and time interval
+    // //compute the new position based on the velocity and time interval
+    //     hVel[i][k] += accel_sum[k] * INTERVAL;
+    //     hPos[i][k] += hVel[i][k] * INTERVAL;
 }
 
 //compute: Updates the positions and locations of the objects in the system based on gravity.
