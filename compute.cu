@@ -18,8 +18,8 @@ double *d_mass;
 
 //Function that computes the pairwise accelerations. Effect is on the first argument.
 __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
-    //initialize i as thread row
-    int i = threadIdx.x;
+    int i = blockIdx.y * blockDim.y + threadIdx.y;
+    int j = blockIdx.x * blockDim.x + threadIdx.x;
 
     if (i >= NUMENTITIES) {
 		return;
@@ -27,9 +27,9 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     
     //This part was just C+P'd from the original compute.c -- only change is
     //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
-    for (int j = 0; j < NUMENTITIES; j++){
+    	for (int j = 0; j < NUMENTITIES; j++){
         if (i == j) {
-            FILL_VECTOR(accels[i][j], 0, 0, 0);
+            FILL_VECTOR(accels[i * NUMENTITIES + j], 0, 0, 0);
         }
         else {
             vector3 distance;
@@ -39,34 +39,32 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
             double magnitude_sq = distance[0]*distance[0] + distance[1]*distance[1] + distance[2]*distance[2];
             double magnitude = sqrt(magnitude_sq);
 			double accelmag = -1 * GRAV_CONSTANT * mass[j] / magnitude_sq;
-			FILL_VECTOR(accels[i][j], accelmag*distance[0]/magnitude, accelmag*distance[1]/magnitude, accelmag*distance[2]/magnitude);
+			FILL_VECTOR(accels[i * NUMENTITIES + j], accelmag*distance[0]/magnitude, accelmag*distance[1]/magnitude, accelmag*distance[2]/magnitude);
         }
     }
 }
 
 //Function to sum rows of the matrix, then update velocity/position.
 __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
-        //this part is also just C and P'd from the original compute.c
-    //sum up the rows of our matrix to get effect on each entity, then update velocity and position.
-	int i = threadIdx.x;
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j, k;
 
     if (i >= NUMENTITIES) {
 		return;
 	}
 
-        vector3 accel_sum = {0, 0, 0};
-        for (j = 0; j < NUMENTITIES ; j++){
-            for (k = 0; k < 3; k++){
-                accel_sum[k] += accels[i * NUMENTITIES + j][k];
-            }
-        }
-        //compute the new velocity based on the acceleration and time interval
-        //compute the new position based on the velocity and time interval
+    vector3 accel_sum = {0, 0, 0};
+    for (j = 0; j < NUMENTITIES ; j++){
         for (k = 0; k < 3; k++){
-            hVel[i][k] += accel_sum[k] * INTERVAL;
-            hPos[i][k] += hVel[i][k] * INTERVAL;
+            accel_sum[k] += accels[i * NUMENTITIES + j][k];
         }
+    }
+    //compute the new velocity based on the acceleration and time interval
+    //compute the new position based on the velocity and time interval
+    for (k = 0; k < 3; k++){
+        hVel[i][k] += accel_sum[k] * INTERVAL;
+        hPos[i][k] += hVel[i][k] * INTERVAL;
+    }
 }
 
 //compute: Updates the positions and locations of the objects in the system based on gravity.
