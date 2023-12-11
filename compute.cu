@@ -62,11 +62,6 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3** accels){
     }
 }
 
-//Host variables
-extern vector3* hVel;
-extern vector3* hPos;
-extern double* mass;
-
 //compute: Updates the positions and locations of the objects in the system based on gravity.
 //Parameters: None
 //Returns: None
