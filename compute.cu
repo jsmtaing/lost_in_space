@@ -19,7 +19,7 @@ double *d_mass;
 //Function that computes the pairwise accelerations. Effect is on the first argument.
 __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     //initialize i as thread row
-    int i = threadIdx.x
+    int i = threadIdx.x;
 
     if (i >= NUMENTITIES) {
 		return;
@@ -58,7 +58,7 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
         vector3 accel_sum = {0, 0, 0};
         for (j = 0; j < NUMENTITIES ; j++){
             for (k = 0; k < 3; k++){
-                accel_sum[k] += accels[i][j][k];
+                accel_sum[k] += accels[i * NUMENTITIES + j][k];
             }
         }
         //compute the new velocity based on the acceleration and time interval
