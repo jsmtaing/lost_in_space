@@ -47,28 +47,22 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 //Function to sum rows of the matrix, then update velocity/position.
 __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
 
-
-
-    
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    int j, k;
+    //index
+    int i = blockIdx.y * blockDim.y + threadIdx.y;
+    int k = threadIdx.x;
 
     if (i >= NUMENTITIES) {
 		return;
 	}
 
     vector3 accel_sum = {0, 0, 0};
-    for (j = 0; j < NUMENTITIES ; j++){
-        for (k = 0; k < 3; k++){
+    for (int j = 0; j < NUMENTITIES ; j++){
             accel_sum[k] += accels[i * NUMENTITIES + j][k];
-        }
     }
     //compute the new velocity based on the acceleration and time interval
     //compute the new position based on the velocity and time interval
-    for (k = 0; k < 3; k++){
         hVel[i][k] += accel_sum[k] * INTERVAL;
         hPos[i][k] += hVel[i][k] * INTERVAL;
-    }
 }
 
 //compute: Updates the positions and locations of the objects in the system based on gravity.
@@ -83,9 +77,9 @@ void compute() {
     comp_PA<<<gridDim, blockDim>>>(d_hPos, d_mass, d_accels);
     cudaDeviceSynchronize();
 
-    cudaError_t err = cudaGetLastError();
-    if (err != cudaSuccess) 
-       printf("Error: %s\n", cudaGetErrorString(err));
+    // cudaError_t err = cudaGetLastError();
+    // if (err != cudaSuccess) 
+    //    printf("Error: %s\n", cudaGetErrorString(err));
 
     sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
 
