@@ -79,9 +79,6 @@ void compute() {
         printf("Error: %s\n", cudaGetErrorString(err));
 
     sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
-    cudaError_t err2 = cudaGetLastError();
-    if (err2 != cudaSuccess) 
-        printf("Error: %s\n", cudaGetErrorString(err2));
 
     cudaDeviceSynchronize();
 
