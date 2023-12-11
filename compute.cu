@@ -14,7 +14,7 @@ Max Mazal
 #include <stdio.h>
 
 //Function that computes the pairwise accelerations. Effect is on the first argument.
-__global__ void comp_PA(vector3 *hPos, double *mass, vector3 **accels){
+__global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -42,7 +42,7 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 **accels){
 }
 
 //Function to sum rows of the matrix, then update velocity/position.
-__global__ void sum_update(vector3* hVel, vector3* hPos, vector3** accels){
+__global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= NUMENTITIES) {
 		return;
@@ -70,8 +70,7 @@ void compute() {
 	dim3 blockDim(16, 16);
 	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
-    vector3 *d_hPos, *d_hVel;
-    vector3 **d_accels;
+    vector3 *d_hPos, *d_hVel, *d_accels;
     double *d_mass;
 
     cudaMalloc((void**)&d_hVel, sizeof(vector3) * NUMENTITIES);
