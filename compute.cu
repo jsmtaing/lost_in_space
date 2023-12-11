@@ -20,6 +20,10 @@ double *d_mass;
 __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (i >= NUMENTITIES) {
+		return;
+	}
     
     //This part was just C+P'd from the original compute.c -- only change is
     //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
@@ -42,8 +46,11 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 
 //Function to sum rows of the matrix, then update velocity/position.
 __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
+    int i = threadIdx.x;
+    if (i >= NUMENTITIES) {
+		return;
+	}
 
-    if (i < NUMENTITIES){
         vector3 accel_sum = {0, 0, 0};
         for (j = 0; j < NUMENTITIES ; j++){
             for (k = 0; k < 3; k++){
@@ -56,7 +63,6 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
             hVel[i][k] += accel_sum[k] * INTERVAL;
             hPos[i][k] += hVel[i][k] * INTERVAL;
         }
-    }
 }
 
 //compute: Updates the positions and locations of the objects in the system based on gravity.
