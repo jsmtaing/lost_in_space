@@ -43,8 +43,7 @@ void initCudaMemory(int numObjects)
 	cudaMalloc((void**)&d_hVel, sizeof(vector3) * numObjects);
 	cudaMalloc((void**)&d_hPos, sizeof(vector3) * numObjects);
 	cudaMalloc((void**)&d_mass, sizeof(double) * numObjects);
-
-	cudaMalloc((void**)&d_accels, sizeof(vector3) * numObjects);
+	cudaMalloc((void**)&d_accels, sizeof(vector3) * numObjects * numObjects);
 }
 
 //Function to do the cudaMemCpy's.
@@ -61,7 +60,6 @@ void freeCudaMemory()
 	cudaFree(d_hVel);
 	cudaFree(d_hPos);
 	cudaFree(d_mass);
-
 	cudaFree(d_accels);
 }
 
@@ -146,7 +144,7 @@ int main(int argc, char **argv)
 	clock_t t1 = clock() - t0;
 
 	#ifdef DEBUG
-	printf("\nPrinting parallelized system.\n");
+	printf("\nPrinting computed system.\n");
 	printSystem(stdout);
 	#endif
 	
