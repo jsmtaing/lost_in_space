@@ -27,7 +27,7 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     
     //This part was just C+P'd from the original compute.c -- only change is
     //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
-    	for (int j = 0; j < NUMENTITIES; j++){
+    if (j < NUMENTITIES){
         if (i == j) {
             FILL_VECTOR(accels[i * NUMENTITIES + j], 0, 0, 0);
         }
