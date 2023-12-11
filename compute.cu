@@ -46,7 +46,11 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 
 //Function to sum rows of the matrix, then update velocity/position.
 __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
-    int i = threadIdx.x;
+        //this part is also just C and P'd from the original compute.c
+    //sum up the rows of our matrix to get effect on each entity, then update velocity and position.
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int j, k;
+
     if (i >= NUMENTITIES) {
 		return;
 	}
