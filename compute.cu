@@ -63,8 +63,9 @@ __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
     //compute the new velocity based on the acceleration and time interval
     //compute the new position based on the velocity and time interval
     for (int k = 0; k < 3; k++) {
-        hVel[i*3+k] += accel_sum[k] * INTERVAL;
-        hPos[i*3+k] += hVel[i*3+k] * INTERVAL;
+        int index = i * 3 + k;
+        hVel[index] += accel_sum[k] * INTERVAL;
+        hPos[index] += hVel[index] * INTERVAL;
     }
 }
 
