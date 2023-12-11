@@ -128,12 +128,12 @@ int main(int argc, char **argv)
 	planetFill();
 	randomFill(NUMPLANETS + 1, NUMASTEROIDS); //Now we have a system!
 
-	initCudaMemory(NUMENTITIES);
-	copyCudaMemory(NUMENTITIES);
-
 	#ifdef DEBUG
 	printSystem(stdout);
 	#endif
+
+	initCudaMemory(NUMENTITIES);
+	copyCudaMemory(NUMENTITIES);
 
 	//printf("Starting compute() loop now...");
 	for (t_now = 0; t_now < DURATION; t_now += INTERVAL){
