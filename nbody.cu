@@ -44,6 +44,8 @@ void initCudaMemory(int numObjects)
 	cudaMalloc((void**)&d_hPos, sizeof(vector3) * numObjects);
 	cudaMalloc((void**)&d_mass, sizeof(double) * numObjects);
 	cudaMalloc((void**)&d_accels, sizeof(vector3) * numObjects * numObjects);
+
+	
 }
 
 //Function to do the cudaMemCpy's.
