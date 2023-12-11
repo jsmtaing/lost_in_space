@@ -1,17 +1,13 @@
-Script started on Mon 11 Dec 2023 05:30:13 PM EST
-]0;maxmazal@login00.darwin:~/lost_in_space[?1034h[(ea-cisc372-silber:maxmazal)@login00.darwin lost_in_space]$ exitsalloc --ntasks=11 --cpus-per-task=1 --gpus=1 --partition=gpu-v100[A[C[C[C[C[C[C[C[C[C[C[C[Cvpkg_require cuda[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cgcc [K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cworkgroup -g ea-ccisc372-silber[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[K
-[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cworkgroup -g ea-ccisc372-silber[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cvpkg_require gcc [K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Kc
-]0;maxmazal@login00.darwin:~/lost_in_space[(ea-cisc372-silber:maxmazal)@login00.darwin lost_in_space]$ vpkg_require gcc [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[K
-[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csalloc --ntasks=11 --cpus-per-task=1 --gpus=1 --partition=gpu-v100[A[C[C[C[C[C[C[C[C[C[C[C[Cvpkg_require cuda[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csalloc --ntasks=1 --cpus-per-task=1 --gpus=1 --partition=gpu-v100[A[C[C[C[C[C[C[C[C[C[C[C[Cvpkg_require cuda[K
-]0;maxmazal@login00.darwin:~/lost_in_space[(ea-cisc372-silber:maxmazal)@login00.darwin lost_in_space]$ vpkg_require cudaa[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cgcc [K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[K
-[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csalloc --ntasks=11 --cpus-per-task=1 --gpus=1 --partition=gpu-v100[A[C[C[C[C[C[C[C[C[C[C[C[Cvpkg_require cuda[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csalloc --ntasks=1 --cpus-per-task=1 --gpus=1 --partition=gpu-v100
-salloc: Pending job allocation 5037136
-salloc: job 5037136 queued and waiting for resources
-salloc: job 5037136 has been allocated resources
-salloc: Granted job allocation 5037136
+Script started on Mon 11 Dec 2023 05:51:49 PM EST
+]0;maxmazal@login00.darwin:~/lost_in_space[?1034h[(ea-cisc372-silber:maxmazal)@login00.darwin lost_in_space]$ exitsalloc --ntasks=11 --cpus-per-task=1 --gpus=1 --partition=gpu-v100[A[C[C[C[C[C[C[C[C[C[C[C[Cvpkg_require cuda[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cgcc [K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csrun nbody[6Pexitsalloc --ntasks=11 --cpus-per-task=1 --gpus=1 --partition=gpu-v100[A[C[C[C[C[C[C[C[C[C[C[C[Cvpkg_require cuda[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csalloc --ntasks=1 --cpus-per-task=1 --gpus=1 --partition=gpu-v100
+salloc: Pending job allocation 5037306
+salloc: job 5037306 queued and waiting for resources
+salloc: job 5037306 has been allocated resources
+salloc: Granted job allocation 5037306
 salloc: Waiting for resource configuration
 salloc: Nodes r2v01 are ready for job
-]0;maxmazal@:~/lost_in_space[?1034h[maxmazal@r2v01 lost_in_space]$ exit[Ksrun nbody
+]0;maxmazal@:~/lost_in_space[?1034h[maxmazal@r2v01 lost_in_space]$ exit[Ksrun nbody 1000
 pos=(0.000000,0.000000,0.000000,),v=(0.000000,0.000000,0.000000,),m=1988999999999999901909255192576.000000
 pos=(57909000000.000000,0.000000,0.000000,),v=(0.000000,47360.000000,0.000000,),m=330110000000000013107200.000000
 pos=(108209000000.000000,0.000000,0.000000,),v=(0.000000,35020.000000,0.000000,),m=4867500000000000349175808.000000
@@ -2032,12 +2028,11 @@ pos=(44404.989339,10732.482961,-45267.281260,),v=(-874.073401,3303.081006,-1463.
 pos=(49373.546242,-22563.401131,-15008.819692,),v=(-743.828712,-397.334339,-1334.726115,),m=489876273211965440000.000000
 pos=(4507.890695,-40267.032520,-19909.428977,),v=(1408.324585,-3072.281679,-1919.893691,),m=295822093678555496448.000000
 pos=(24899.483088,-33841.250969,0.000000,),v=(-2248.076902,1137.005792,0.000000,),m=0.000000
-This took a total time of 0.700000 seconds
+This took a total time of 0.630000 seconds
 ]0;maxmazal@:~/lost_in_space[maxmazal@r2v01 lost_in_space]$ exit
 logout
-salloc: Relinquishing job allocation 5037136
-salloc: Job allocation 5037136 has been revoked.
+salloc: Relinquishing job allocation 5037306
 ]0;maxmazal@login00.darwin:~/lost_in_space[(ea-cisc372-silber:maxmazal)@login00.darwin lost_in_space]$ exit
 exit
 
-Script done on Mon 11 Dec 2023 05:32:39 PM EST
+Script done on Mon 11 Dec 2023 05:54:35 PM EST
