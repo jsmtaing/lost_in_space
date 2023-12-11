@@ -7,36 +7,37 @@ Max Mazal
 #include <cuda_runtime.h>
 #include <stdlib.h>
 #include <math.h>
+
 #include "vector.h"
 #include "config.h"
 
-//temporary library
-#include <stdio.h>
+extern vector3* hVel;
+extern vector3* hPos;
+extern double* mass;
 
 //Function that computes the pairwise accelerations. Effect is on the first argument.
-__global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
+__global__ void comp_PA(vector3* hPos, double* mass, vector3** accels){
     int i = blockIdx.y * blockDim.y + threadIdx.y;
-    int j = blockIdx.x * blockDim.x + threadIdx.x;
-
+    //int j = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= NUMENTITIES) {
 		return;
 	}
     
     //This part was just C+P'd from the original compute.c -- only change is
     //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
-    if (j < NUMENTITIES){
+    for (int j = 0; j < NUMENTITIES; j++){
         if (i == j) {
-            FILL_VECTOR(accels[i * NUMENTITIES + j], 0, 0, 0);
+            FILL_VECTOR(accels[i][j], 0, 0, 0);
         }
         else {
-            vector3 distance;
+            vector3 d; //distance
             for (int k = 0; k < 3; k++){
                 distance[k] = hPos[i][k] - hPos[j][k];
             }
-            double magnitude_sq = distance[0]*distance[0] + distance[1]*distance[1] + distance[2]*distance[2];
-            double magnitude = sqrt(magnitude_sq);
+            double magnitude_sq = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+            double mag = sqrt(magnitude_sq);
 			double accelmag = -1 * GRAV_CONSTANT * mass[j] / magnitude_sq;
-			FILL_VECTOR(accels[i * NUMENTITIES + j], accelmag*distance[0]/magnitude, accelmag*distance[1]/magnitude, accelmag*distance[2]/magnitude);
+			FILL_VECTOR(accels[i][j], accelmag*d[0]/mag, accelmag*d[1]/mag, accelmag*d[2]/mag);
         }
     }
 }
@@ -70,8 +71,10 @@ void compute() {
 	dim3 blockDim(16, 16);
 	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
-    vector3 *d_hPos, *d_hVel, *d_accels;
-    double *d_mass;
+    vector3* d_hVel;
+    vector3* d_hPos;
+    vector** d_accels;
+    double* d_mass;
 
     cudaMalloc((void**)&d_hVel, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc((void**)&d_hPos, sizeof(vector3) * NUMENTITIES);
