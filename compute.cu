@@ -20,7 +20,6 @@ double *d_mass;
 __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = blockIdx.x * blockDim.x + threadIdx.x;
-    int k;
     
     //This part was just C+P'd from the original compute.c -- only change is
     //that it's not a for loop, since it should be looping in the for loop in nbody.c's main instead.
@@ -30,10 +29,10 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
         }
         else {
             vector3 distance;
-            for (k = 0; k < 3; k++){
+            for (int k = 0; k < 3; k++){
                 distance[k] = hPos[i][k] - hPos[j][k];
             }
-            double magnitude_sq = distance[0] * distance[0] + distance[1] * distance[1] + distance[2] * distance[2];
+            double magnitude_sq = distance[0]*distance[0] + distance[1]*distance[1] + distance[2]*distance[2];
             double magnitude = sqrt(magnitude_sq);
 			double accelmag = -1 * GRAV_CONSTANT * mass[j] / magnitude_sq;
 			FILL_VECTOR(accels[i * NUMENTITIES + j], accelmag*distance[0]/magnitude, accelmag*distance[1]/magnitude, accelmag*distance[2]/magnitude);
@@ -73,7 +72,7 @@ void compute() {
 	dim3 blockDim(16, 16);
 	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
-    comp_PA<<<gridDim, blockDim>>>(d_hVel, d_mass, d_accels);
+    comp_PA<<<gridDim, blockDim>>>(d_hPos, d_mass, d_accels);
     //cudaDeviceSynchronize();
     //cudaError_t err = cudaGetLastError();
     //if (err != cudaSuccess) 
