@@ -44,8 +44,6 @@ void initCudaMemory(int numObjects)
 	cudaMalloc((void**)&d_hPos, sizeof(vector3) * numObjects);
 	cudaMalloc((void**)&d_mass, sizeof(double) * numObjects);
 	cudaMalloc((void**)&d_accels, sizeof(vector3) * numObjects * numObjects);
-
-	
 }
 
 //Function to do the cudaMemCpy's.
@@ -134,15 +132,16 @@ int main(int argc, char **argv)
 	printSystem(stdout);
 	#endif
 
-	initCudaMemory(NUMENTITIES);
-	copyCudaMemory(NUMENTITIES);
+	//initCudaMemory(NUMENTITIES);
+	//copyCudaMemory(NUMENTITIES);
 
 	//printf("Starting compute() loop now...");
 	for (t_now = 0; t_now < DURATION; t_now += INTERVAL){
 		compute();
 	}
 
-	freeCudaMemory();
+	//freeCudaMemory();
+	freeHostMemory();
 	clock_t t1 = clock() - t0;
 
 	#ifdef DEBUG
@@ -151,5 +150,4 @@ int main(int argc, char **argv)
 	#endif
 	
 	printf("This took a total time of %f seconds\n", (double)t1/CLOCKS_PER_SEC);
-	freeHostMemory();
 }

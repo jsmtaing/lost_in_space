@@ -13,9 +13,6 @@ Max Mazal
 //temporary library
 #include <stdio.h>
 
-vector3 *d_hPos, *d_hVel, *d_accels;
-double *d_mass;
-
 //Function that computes the pairwise accelerations. Effect is on the first argument.
 __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
     int i = blockIdx.y * blockDim.y + threadIdx.y;
@@ -46,26 +43,21 @@ __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
 
 //Function to sum rows of the matrix, then update velocity/position.
 __global__ void sum_update(vector3* hVel, vector3* hPos, vector3* accels){
-
-    //index
     int i = blockIdx.x * blockDim.x + threadIdx.x;
-
     if (i >= NUMENTITIES) {
 		return;
 	}
-    else {
-        vector3 accel_sum = {0, 0, 0};
-        for (int j = 0; j < NUMENTITIES ; j++){
-            for (int k = 0; k < 3; k++) {
-                accel_sum[k] += accels[i * NUMENTITIES + j][k];
-            }
-        }
-        //compute the new velocity based on the acceleration and time interval
-        //compute the new position based on the velocity and time interval
+
+    vector3 accel_sum = {0, 0, 0};
+    for (int j = 0; j < NUMENTITIES; j++) {
         for (int k = 0; k < 3; k++) {
-            hVel[i][k] += accel_sum[k] * INTERVAL;
-            hPos[i][k] += hVel[i][k] * INTERVAL;
+            accel_sum[k] += accels[i][j][k];
         }
+    }
+    //Update velocity and postion.
+    for (int k = 0; k < 3; k++) {
+        hVel[i][k] += accel_sum[k] * INTERVAL;
+        hPos[i][k] += hVel[i][k] * INTERVAL;
     }
 }
 
@@ -78,8 +70,20 @@ void compute() {
 	dim3 blockDim(16, 16);
 	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
+    vector3 *d_hPos, *d_hVel, **d_accels;
+    double *d_mass;
+
+    cudaMalloc((void**)&d_hVel, sizeof(vector3) * numObjects);
+	cudaMalloc((void**)&d_hPos, sizeof(vector3) * numObjects);
+	cudaMalloc((void**)&d_mass, sizeof(double) * numObjects);
+	cudaMalloc((void**)&d_accels, sizeof(vector3) * numObjects * numObjects);
+
+    cudaMemcpy(d_hVel, hVel, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_mass, mass, sizeof(double) * numObjects, cudaMemcpyHostToDevice);
+
     comp_PA<<<gridDim, blockDim>>>(d_hPos, d_mass, d_accels);
-    //cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 
     // cudaError_t err = cudaGetLastError();
     // if (err != cudaSuccess) 
@@ -91,4 +95,9 @@ void compute() {
     cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
 	cudaMemcpy(hVel, d_hVel, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
     //cudaMemcpy(mass, d_mass, sizeof(double)*NUMENTITIES, cudaMemcpyDeviceToHost);
+
+    cudaFree(d_hVel);
+	cudaFree(d_hPos);
+	cudaFree(d_mass);
+	cudaFree(d_accels);
 }
