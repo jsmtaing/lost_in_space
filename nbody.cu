@@ -37,32 +37,6 @@ void freeHostMemory()
 	free(mass);
 }
 
-//Function to initialize cuda memory variables.
-void initCudaMemory(int numObjects)
-{
-	cudaMalloc((void**)&d_hVel, sizeof(vector3) * numObjects);
-	cudaMalloc((void**)&d_hPos, sizeof(vector3) * numObjects);
-	cudaMalloc((void**)&d_mass, sizeof(double) * numObjects);
-	//cudaMalloc((void**)&d_accels, sizeof(vector3) * numObjects * numObjects);
-}
-
-//Function to do the cudaMemCpy's.
-void copyCudaMemory(int numObjects)
-{
-	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * numObjects, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_mass, mass, sizeof(double) * numObjects, cudaMemcpyHostToDevice);
-}
-
-//Function to free storage allocated by a previous call to initCudaMemory.
-void freeCudaMemory()
-{
-	cudaFree(d_hVel);
-	cudaFree(d_hPos);
-	cudaFree(d_mass);
-	//cudaFree(d_accels);
-}
-
 //planetFill: Fill the first NUMPLANETS+1 entries of the entity arrays with an estimation
 //				of our solar system (Sun+NUMPLANETS)
 //Parameters: None
