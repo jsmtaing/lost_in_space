@@ -13,8 +13,8 @@ Max Mazal
 //temporary library
 #include <stdio.h>
 
-vector3 *d_hPos, *d_hVel, *d_accels;
-double *d_mass;
+__shared__ vector3 *d_hPos, *d_hVel, *d_accels;
+__shared__ double *d_mass;
 
 //Function that computes the pairwise accelerations. Effect is on the first argument.
 __global__ void comp_PA(vector3 *hPos, double *mass, vector3 *accels){
@@ -74,13 +74,13 @@ void compute() {
 	dim3 gridDim((NUMENTITIES + blockDim.x - 1) / blockDim.x, (NUMENTITIES + blockDim.y - 1) / blockDim.y);
 
     comp_PA<<<gridDim, blockDim>>>(d_hVel, d_mass, d_accels);
-    cudaDeviceSynchronize();
+    //cudaDeviceSynchronize();
     //cudaError_t err = cudaGetLastError();
     //if (err != cudaSuccess) 
     //    printf("Error: %s\n", cudaGetErrorString(err));
 
     sum_update<<<gridDim, blockDim>>>(d_hVel, d_hPos, d_accels);
-    //cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 
     cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
 	cudaMemcpy(hVel, d_hVel, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
